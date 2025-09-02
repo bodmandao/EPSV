@@ -36,7 +36,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-### ⚡ 3. Instant Access via CDN
+### 3. Instant Access via CDN
 
 * **FilCDN** integration → blazing fast data delivery.
 * Users can retrieve encrypted files globally with **edge caching**.
@@ -44,7 +44,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-### 💰 4. Onchain Payment Rails
+### 4. Onchain Payment Rails
 
 * **Filecoin Pay integration** for:
 
@@ -55,7 +55,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-### 🔑 5. Access Control & Sharing
+### 5. Access Control & Sharing
 
 * Access managed via **onchain ACL (Access Control Lists)**.
 * Grant/Revoke access through **smart contracts**.
@@ -64,7 +64,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-### 🧑‍💻 6. Developer SDK Integration
+### 6. Developer SDK Integration
 
 * **Synapse SDK** for developers to plug EPSV directly into their dApps.
 * Provides high-level APIs for:
@@ -77,7 +77,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 
 
-## 🛑 Problem
+## Problem
 
 1. **Lack of Personal Data Privacy**
 
@@ -101,7 +101,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-## ✅ Solution – EPSV
+## Solution – EPSV
 
 **EPSV = Secure + Ownable + Payable Storage Vault**
 
@@ -119,7 +119,7 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ---
 
-## 🔧 EPSV Architecture
+## EPSV Architecture
 
 ```mermaid
 flowchart TD
@@ -138,7 +138,7 @@ flowchart TD
 
 ---
 
-## 🔐 Data Encryption & Access Control
+## Data Encryption & Access Control
 
 ```mermaid
 sequenceDiagram
@@ -161,7 +161,7 @@ sequenceDiagram
 
 ---
 
-## 💸 Payment Flow (Filecoin Pay)
+## Payment Flow (Filecoin Pay)
 
 ```mermaid
 flowchart LR
@@ -202,7 +202,7 @@ sequenceDiagram
 
 ---
 
-## 📌 Benefits
+## Benefits
 
 1. **Privacy First** – No one but the user (or explicitly authorized recipients) can decrypt files.
 2. **Verifiable Storage** – PDP ensures that storage providers prove possession of files.
