@@ -2,10 +2,80 @@
 
 # 🔐 Encrypted Personal Storage Vault (EPSV)
 
-A decentralized, privacy-preserving storage solution built on **Filecoin Onchain Cloud**.
-The Encrypted Personal Storage Vault (EPSV) is a decentralized, user-controlled storage system built on Filecoin Onchain Cloud. It empowers individuals and organizations to store, access, and manage sensitive data (documents, contracts, IDs, credentials, etc.) with strong encryption, privacy guarantees, and monetization options.
+## Overview
+
+The **Encrypted Personal Storage Vault (EPSV)** is a decentralized, user-controlled storage system built on **Filecoin Onchain Cloud**. It empowers individuals and organizations to store, access, and manage **sensitive data (documents, contracts, IDs, credentials, etc.)** with strong encryption, **privacy guarantees**, and **monetization options**.
+
+EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **encrypted access control** to ensure data is always:
+
+* **Secure** (AES/RSA/Threshold cryptography, end-to-end encryption)
+* **Available** (warm storage + CDN for faster retrieval)
+* **Verifiable** (zero-knowledge proofs of possession)
+* **Monetizable** (native FIL/ERC-20 payments, subscription models, or pay-per-access)
 
 ---
+
+## Core Features
+
+### 🔐 1. End-to-End Encryption
+
+* Data is encrypted **client-side** before being stored.
+* Uses **hybrid encryption**:
+
+  * Symmetric (AES-256) for data payloads.
+  * Asymmetric (RSA/ECIES) for key distribution.
+* Supports **threshold encryption** → data can only be decrypted if a quorum of authorized parties provide partial keys.
+
+---
+
+### 📦 2. Warm Storage Integration
+
+* Uses **FilecoinWarmStorageService** for **faster storage & retrieval**.
+* PDP verification ensures providers continuously prove possession of encrypted data.
+* Automatic **redundancy across multiple storage providers** to avoid single-point failures.
+
+---
+
+### ⚡ 3. Instant Access via CDN
+
+* **FilCDN** integration → blazing fast data delivery.
+* Users can retrieve encrypted files globally with **edge caching**.
+* Especially useful for **enterprise teams & personal document vaults**.
+
+---
+
+### 💰 4. Onchain Payment Rails
+
+* **Filecoin Pay integration** for:
+
+  * One-time payments (e.g., pay-per-file download).
+  * **Streaming payments** (subscription storage plans).
+  * **Revenue sharing** (shared vault monetization).
+* Vault owners can **grant temporary or permanent access** to third parties via onchain payments.
+
+---
+
+### 🔑 5. Access Control & Sharing
+
+* Access managed via **onchain ACL (Access Control Lists)**.
+* Grant/Revoke access through **smart contracts**.
+* Supports **delegated access** → e.g., grant a lawyer read-only access to specific encrypted documents.
+* Optional **zero-knowledge proofs** for **anonymous but verifiable access rights**.
+
+---
+
+### 🧑‍💻 6. Developer SDK Integration
+
+* **Synapse SDK** for developers to plug EPSV directly into their dApps.
+* Provides high-level APIs for:
+
+  * Encrypt → Store → Verify → Share
+  * Payment + subscription handling
+  * PDP checks + CDN retrieval
+
+---
+
+
 
 ## 🛑 Problem
 
