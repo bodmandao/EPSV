@@ -2,6 +2,9 @@
 
 # 🔐 Encrypted Personal Storage Vault (EPSV)
 
+<img width="1024" height="1024" alt="epsv" src="https://github.com/user-attachments/assets/b1f5347c-044f-40dc-9302-4837dd66a9e4" />
+
+
 ## Overview
 
 The **Encrypted Personal Storage Vault (EPSV)** is a decentralized, user-controlled storage system built on **Filecoin Onchain Cloud**. It empowers individuals and organizations to store, access, and manage **sensitive data (documents, contracts, IDs, credentials, etc.)** with strong encryption, **privacy guarantees**, and **monetization options**.
