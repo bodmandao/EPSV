@@ -67,7 +67,7 @@ export default function NewVaultModal({ isOpen, onClose, onDeploy }: NewVaultMod
               placeholder="Vault Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+              className="w-full rounded-lg border border-gray-300 text-[#1d3557] bg-white/50 px-3 py-2"
             />
           )}
 

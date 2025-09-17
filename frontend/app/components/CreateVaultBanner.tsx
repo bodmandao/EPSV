@@ -12,7 +12,7 @@ export default function CreateVaultBanner() {
         </p>
       </div>
       <button className="mt-4 sm:mt-0 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
-        <PlusCircle size={18} /> Start New Vault
+        {/* <PlusCircle size={18} /> Start New Vault */}
       </button>
     </div>
   );

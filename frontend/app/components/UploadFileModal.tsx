@@ -75,13 +75,13 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
             placeholder="File Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+            className="w-full rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
           />
           <textarea
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+            className="w-full rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
           />
           <div className="flex gap-2">
             <input
@@ -89,7 +89,7 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
               placeholder="Add tag"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+              className="flex-1 rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
             />
             <button onClick={addTag} className="px-3 py-2 rounded-lg bg-[#2a9d8f] text-white">
               +
@@ -107,7 +107,7 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
         {/* Permissions */}
         <div className="mt-4 space-y-2">
           {["free", "one-time", "streaming"].map((opt) => (
-            <label key={opt} className="flex items-center gap-2">
+            <label key={opt} className="flex text-[#1d3557] items-center gap-2">
               <input
                 type="radio"
                 checked={permission === opt}
@@ -126,12 +126,12 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
               placeholder="Price"
               value={price || ""}
               onChange={(e) => setPrice(Number(e.target.value))}
-              className="flex-1 rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+              className="flex-1 rounded-lg text-[#1d3557] border border-gray-300 bg-white/50 px-3 py-2"
             />
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value as "FIL" | "USDC")}
-              className="rounded-lg border border-gray-300 bg-white/50 px-3 py-2"
+              className="rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
             >
               <option value="FIL">FIL</option>
               <option value="USDC">USDC</option>

@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { useModal } from "../context/ModalContext";
 import { Search, Upload, PlusCircle, Home, Folder, Share2, Clock, Trash2, Settings, LogOut } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
    const { openModal } = useModal();
@@ -14,27 +15,27 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="p-6 text-blue-600 font-bold text-xl">Logo</div>
 
           <nav className="px-4 space-y-1">
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'/dashboard'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Home size={18} /> All Files
-            </a>
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            </Link>
+            <Link href={'/vaults'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Folder size={18} /> My Vaults
-            </a>
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            </Link>
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} /> Shared with Me
-            </a>
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            </Link>
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Clock size={18} /> Recent
-            </a>
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            </Link>
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Trash2 size={18} /> Trash
-            </a>
+            </Link>
 
             <div className="mt-4 text-xs text-gray-400 px-2">SYSTEM</div>
-            <a className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <span className="h-2 w-2 rounded-full bg-green-500"></span>
               Storage Health
-            </a>
+            </Link>
           </nav>
         </div>
 
