@@ -2,12 +2,25 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useAccount } from "wagmi";
 import { usePrivy } from "@privy-io/react-auth";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function HomePage() {
   const { login } = usePrivy();
   const { openConnectModal } = useConnectModal();
+  const { isConnected } = useAccount();
+  const { authenticated } = usePrivy();
+  const router = useRouter();
+
+    useEffect(() => {
+    if (isConnected || authenticated) {
+      router.push("/dashboard");
+    }
+  }, [isConnected, authenticated, router]);
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#1d3557] to-[#0b1d33] text-[#f1faee] font-inter flex flex-col">
       {/* Hero Section */}
@@ -98,7 +111,6 @@ export default function HomePage() {
           viewport={{ once: true }}
           className="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl"
         >
-          {/* Replace with real screenshot later */}
           <Image
             src="/dashboard-preview.png"
             alt="Dashboard Preview"

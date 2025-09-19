@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
           <div className="flex gap-2">
             <button  onClick={() => openModal("uploadFile")}
-             className="flex items-center gap-1 bg-gray-100 px-3 py-2 rounded-lg text-sm">
+             className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
               <Upload size={16} /> Upload
             </button>
             <button 

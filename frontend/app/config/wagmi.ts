@@ -5,8 +5,8 @@ import { injected, walletConnect } from 'wagmi/connectors'
 const config = createConfig({
     chains: [filecoin, filecoinCalibration] as const,
     transports: {
-        [filecoin.id]: http(),
         [filecoinCalibration.id]: http(),
+        [filecoin.id]: http(),
     },
     connectors: [
         injected(),
