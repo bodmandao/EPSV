@@ -4,9 +4,13 @@ import { ReactNode } from "react";
 import { useModal } from "../context/ModalContext";
 import { Search, Upload, PlusCircle, Home, Folder, Share2, Clock, Trash2, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
    const { openModal } = useModal();
+     const { address } = useAccount();
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -62,6 +66,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="flex gap-2">
+             <ConnectButton  accountStatus="address" />
             <button  onClick={() => openModal("uploadFile")}
              className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
               <Upload size={16} /> Upload
