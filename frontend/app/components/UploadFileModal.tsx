@@ -1,21 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, UploadCloud } from "lucide-react";
+import { useAccount } from "wagmi";
+import { useFileUpload } from "@/hooks/useFileUpload";
+import { encryptFile, importKey } from "@/utils/crypto"; 
+import { supabase } from "@/utils/supabase"; 
 
 interface UploadFileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (file: {
-    name: string;
-    description: string;
-    tags: string[];
-    permission: string;
-    price?: number;
-    currency?: "FIL" | "USDC";
-  }) => void;
 }
 
-export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFileModalProps) {
+export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProps) {
+  const { address } = useAccount();
+
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -24,6 +22,24 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
   const [permission, setPermission] = useState("free");
   const [price, setPrice] = useState<number | undefined>();
   const [currency, setCurrency] = useState<"FIL" | "USDC">("FIL");
+  const [vaults, setVaults] = useState<any[]>([]);
+  const [selectedVault, setSelectedVault] = useState<string>("");
+
+  const { uploadFileMutation } = useFileUpload();
+  const { mutateAsync: uploadFile, isPending: isUploading } = uploadFileMutation;
+
+  useEffect(() => {
+    if (!address) return;
+    // Fetch vaults owned or joined by wallet
+    const fetchVaults = async () => {
+      const { data, error } = await supabase
+        .from("vaults")
+        .select("*")
+        .or(`owner_address.eq.${address},members.cs.{${address}}`);
+      if (!error && data) setVaults(data);
+    };
+    fetchVaults();
+  }, [address]);
 
   if (!isOpen) return null;
 
@@ -34,8 +50,46 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
     }
   };
 
-  const handleUpload = () => {
-    onUpload({ name, description, tags, permission, price, currency });
+  const handleUpload = async () => {
+    if (!file || !selectedVault) return alert("Pick a file and vault");
+
+    // Get vault info (has AES key stored)
+    const vault = vaults.find((v) => v.id === selectedVault);
+    if (!vault) return alert("Vault not found");
+
+    // Import vault key
+    const vaultKey = await importKey(vault.encrypted_key);
+
+    // Encrypt file
+    const { encryptedFile, iv } = await encryptFile(file, vaultKey);
+
+    // Upload encrypted blob to Filecoin
+    const result = await uploadFile(encryptedFile);
+    const fileCid = result?.pieceCid;
+
+    // Save metadata to supabase
+    const { error } = await supabase.from("files").insert([
+      {
+        vault_id: vault.id,
+        owner_address: address,
+        file_name: name || file.name,
+        description,
+        tags,
+        permission,
+        price,
+        currency,
+        cid: fileCid,
+        encrypted_key: vault.encrypted_key, 
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (error) {
+      console.error(error);
+      return alert("Error saving metadata");
+    }
+
+    onClose();
   };
 
   return (
@@ -58,15 +112,22 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
           <input type="file" hidden onChange={(e) => setFile(e.target.files?.[0] || null)} />
         </label>
 
-        {/* Progress (mock encryption status) */}
-        {file && (
-          <div className="mt-3">
-            <p className="text-sm text-gray-700">Encrypting {file.name}...</p>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mt-1">
-              <div className="h-full bg-[#2a9d8f] w-1/2 animate-pulse"></div>
-            </div>
-          </div>
-        )}
+        {/* Vault selection */}
+        <div className="mt-3">
+          <label className="block mb-1 text-sm font-semibold text-[#1d3557]">Select Vault</label>
+          <select
+            value={selectedVault}
+            onChange={(e) => setSelectedVault(e.target.value)}
+            className="w-full rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
+          >
+            <option value="">-- Choose a vault --</option>
+            {vaults.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name} ({v.owner_address.slice(0, 6)}…{v.owner_address.slice(-4)})
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Metadata */}
         <div className="mt-4 space-y-3">
@@ -143,10 +204,11 @@ export default function UploadFileModal({ isOpen, onClose, onUpload }: UploadFil
         <div className="flex justify-between mt-6">
           <button onClick={onClose} className="text-gray-600 hover:text-[#e76f51]">Cancel</button>
           <button
+            disabled={isUploading}
             onClick={handleUpload}
             className="rounded-lg bg-[#2a9d8f] text-white px-4 py-2 shadow hover:bg-[#21867a]"
           >
-            Encrypt & Upload
+            {isUploading ? "Uploading..." : "Encrypt & Upload"}
           </button>
         </div>
       </div>

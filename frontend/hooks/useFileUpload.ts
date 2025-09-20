@@ -4,7 +4,6 @@ import { useConfetti } from "@/hooks/useConfetti";
 import { useAccount } from "wagmi";
 import { preflightCheck } from "@/utils/preflightCheck";
 import { useSynapse } from "@/providers/SynapseProvider";
-import { Synapse } from "@filoz/synapse-sdk";
 
 export type UploadedInfo = {
   fileName?: string;
@@ -23,30 +22,29 @@ export const useFileUpload = () => {
   const { synapse } = useSynapse();
   const { triggerConfetti } = useConfetti();
   const { address } = useAccount();
+  
   const mutation = useMutation({
     mutationKey: ["file-upload", address],
     mutationFn: async (file: File) => {
       if (!synapse) throw new Error("Synapse not found");
       if (!address) throw new Error("Address not found");
+      
       setProgress(0);
       setUploadedInfo(null);
       setStatus("🔄 Initializing file upload to Filecoin...");
 
-      // 1) Convert File → ArrayBuffer
+      console.log("Starting upload process...");
+
+      // Convert File → ArrayBuffer → Uint8Array
       const arrayBuffer = await file.arrayBuffer();
-      // 2) Convert ArrayBuffer → Uint8Array
       const uint8ArrayBytes = new Uint8Array(arrayBuffer);
 
-      // 3) Create Synapse instance
-
-      // 4) Get dataset
+      // Get dataset
       const datasets = await synapse.storage.findDataSets(address);
-      // 5) Check if we have a dataset
       const datasetExists = datasets.length > 0;
-      // Include proofset creation fee if no proofset exists
       const includeDatasetCreationFee = !datasetExists;
 
-      // 6) Check if we have enough USDFC to cover the storage costs and deposit if not
+      // Preflight check
       setStatus("💰 Checking USDFC balance and storage allowances...");
       setProgress(5);
       await preflightCheck(
@@ -60,7 +58,9 @@ export const useFileUpload = () => {
       setStatus("🔗 Setting up storage service and dataset...");
       setProgress(25);
 
-      // 7) Create storage service
+      console.log("Creating storage service...");
+
+      // Create storage service
       const storageService = await synapse.createStorage({
         callbacks: {
           onDataSetResolved: (info) => {
@@ -96,49 +96,81 @@ export const useFileUpload = () => {
 
       setStatus("📁 Uploading file to storage provider...");
       setProgress(55);
-      // 8) Upload file to storage provider
-      const { pieceCid } = await storageService.upload(uint8ArrayBytes, {
-        onUploadComplete: (piece) => {
-          setStatus(
-            `📊 File uploaded! Signing msg to add pieces to the dataset`
-          );
-          setUploadedInfo((prev) => ({
-            ...prev,
-            fileName: file.name,
-            fileSize: file.size,
-            pieceCid: piece.toV1().toString(),
-          }));
-          setProgress(80);
-        },
-        onPieceAdded: (transactionResponse) => {
-          setStatus(
-            `🔄 Waiting for transaction to be confirmed on chain${
-              transactionResponse ? `(txHash: ${transactionResponse.hash})` : ""
-            }`
-          );
-          if (transactionResponse) {
-            console.log("Transaction response:", transactionResponse);
+      
+      console.log("Starting file upload...");
+
+      // Use a promise to handle the upload completion
+      return new Promise<UploadedInfo>((resolve, reject) => {
+        let finalPieceCid: string | undefined;
+        let finalTxHash: string | undefined;
+        let uploadCompleted = false;
+
+        storageService.upload(uint8ArrayBytes, {
+          onUploadComplete: (piece) => {
+            console.log("onUploadComplete called with piece:", piece);
+            setStatus(`📊 File uploaded! Signing msg to add pieces to the dataset`);
+            
+            const pieceCid = piece.toV1().toString();
+            finalPieceCid = pieceCid;
+            console.log("Piece CID:", pieceCid);
+            
             setUploadedInfo((prev) => ({
               ...prev,
-              txHash: transactionResponse?.hash,
+              fileName: file.name,
+              fileSize: file.size,
+              pieceCid: pieceCid,
             }));
-          }
-        },
-        onPieceConfirmed: (pieceIds) => {
-          setStatus("🌳 Data pieces added to dataset successfully");
-          setProgress(90);
-        },
-      });
+            setProgress(80);
+            uploadCompleted = true;
+          },
+          onPieceAdded: (transactionResponse) => {
+            console.log("onPieceAdded called with:", transactionResponse);
+            setStatus(
+              `🔄 Waiting for transaction to be confirmed on chain${
+                transactionResponse ? `(txHash: ${transactionResponse.hash})` : ""
+              }`
+            );
+            if (transactionResponse) {
+              console.log("Transaction response:", transactionResponse);
+              finalTxHash = transactionResponse.hash;
+              setUploadedInfo((prev) => ({
+                ...prev,
+                txHash: transactionResponse.hash,
+              }));
+            }
 
-      setProgress(95);
-      setUploadedInfo((prev) => ({
-        ...prev,
-        fileName: file.name,
-        fileSize: file.size,
-        pieceCid: pieceCid.toV1().toString(),
-      }));
+             resolve({
+              fileName: file.name,
+              fileSize: file.size,
+              pieceCid: finalPieceCid,
+              txHash: finalTxHash,
+            });
+          },
+          // onPieceConfirmed: (pieceIds) => {
+          //   console.log("onPieceConfirmed called with:", pieceIds);
+          //   setStatus("🌳 Data pieces added to dataset successfully");
+          //   setProgress(90);
+            
+          //   // Resolve when everything is complete
+           
+          // },
+        }).catch((error) => {
+          console.error("Upload error:", error);
+          reject(error);
+        });
+
+        // Add a timeout as fallback in case callbacks don't fire
+        setTimeout(() => {
+          if (!uploadCompleted) {
+            console.warn("Upload timeout - callbacks may not have fired");
+            reject(new Error("Upload timeout - callbacks not received"));
+          }
+        }, 30000); // 30 second timeout
+      });
     },
-    onSuccess: () => {
+    onSuccess: (uploadedInfo) => {
+      console.log("Upload successful with info:", uploadedInfo);
+      setUploadedInfo(uploadedInfo);
       setStatus("🎉 File successfully stored on Filecoin!");
       setProgress(100);
       triggerConfetti();
