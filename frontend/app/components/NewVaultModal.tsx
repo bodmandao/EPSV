@@ -72,6 +72,7 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
       setTimeout(() => {
         onClose();
       }, 3000)
+
     } catch (err) {
       console.error(err);
       alert("Error creating vault");
@@ -227,7 +228,7 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
               {isDeploying
                 ? "Deploying..."
                 : step === 4
-                  ? "Deploy"
+                  ? "Create"
                   : "Next"}
             </button>
           </div>

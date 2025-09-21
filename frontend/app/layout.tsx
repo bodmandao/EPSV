@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import config from "@/app/config/wagmi";
 import { ModalProvider, useModal } from "./context/ModalContext";
 import { ConfettiProvider } from "@/providers/ConfettiProvider";
+import { SynapseProvider } from "@/providers/SynapseProvider";
 
 const queryClient = new QueryClient();
 
@@ -19,17 +20,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
               <RainbowKitProvider>
-                <PrivyProvider
-                  config={{
-                    loginMethods: ['email', 'google', 'twitter', 'discord'],
-                    appearance: {
-                      theme: 'dark',
-                      accentColor: '#2a9d8f',
-                    },
-                  }}
-                  appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}>
-                  <ModalProvider>{children}</ModalProvider>
-                </PrivyProvider>
+                <SynapseProvider>
+                  <PrivyProvider
+                    config={{
+                      loginMethods: ['email', 'google', 'twitter', 'discord'],
+                      appearance: {
+                        theme: 'dark',
+                        accentColor: '#2a9d8f',
+                      },
+                    }}
+                    appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}>
+                    <ModalProvider>
+                      {children}
+                    </ModalProvider>
+                  </PrivyProvider>
+                </SynapseProvider>
               </RainbowKitProvider>
             </QueryClientProvider>
           </WagmiProvider>

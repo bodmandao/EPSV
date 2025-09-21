@@ -1,9 +1,12 @@
 // Generate AES-GCM key
-export async function generateVaultKey(): Promise<CryptoKey> {
-  return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
-    "encrypt",
-    "decrypt",
-  ]);
+export async function generateVaultKey(): Promise<string> {
+  const key = await crypto.subtle.generateKey(
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"]
+  );
+  const raw = await crypto.subtle.exportKey("raw", key);
+  return btoa(String.fromCharCode(...new Uint8Array(raw))); // base64 string
 }
 
 // Export to base64
@@ -13,8 +16,8 @@ export async function exportKey(key: CryptoKey): Promise<string> {
 }
 
 // Import from base64
-export async function importKey(b64: string): Promise<CryptoKey> {
-  const raw = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+export async function importKey(base64Key: string): Promise<CryptoKey> {
+  const raw = Uint8Array.from(atob(base64Key), (c) => c.charCodeAt(0));
   return crypto.subtle.importKey("raw", raw, { name: "AES-GCM" }, true, [
     "encrypt",
     "decrypt",

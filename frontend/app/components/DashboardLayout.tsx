@@ -67,14 +67,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
           <div className="flex gap-2">
              <ConnectButton  accountStatus="address" />
-            <button  onClick={() => openModal("uploadFile")}
-             className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
-              <Upload size={16} /> Upload
-            </button>
+            
             <button 
              onClick={() => openModal("newVault")}
              className="flex items-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
               <PlusCircle size={16} /> New Vault
+            </button>
+
+            <button  onClick={() => openModal("uploadFile")}
+             className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
+              <Upload size={16} /> Upload
             </button>
           </div>
         </div>

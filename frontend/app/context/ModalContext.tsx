@@ -27,20 +27,12 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         <NewVaultModal
           isOpen
           onClose={closeModal}
-          onDeploy={(vault) => {
-            console.log("Vault deployed:", vault);
-            closeModal();
-          }}
         />
       )}
       {modal === "uploadFile" && (
         <UploadFileModal
           isOpen
           onClose={closeModal}
-          onUpload={(file) => {
-            console.log("File uploaded:", file);
-            closeModal();
-          }}
         />
       )}
     </ModalContext.Provider>

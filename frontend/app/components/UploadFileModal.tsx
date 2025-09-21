@@ -53,8 +53,10 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   const handleUpload = async () => {
     if (!file || !selectedVault) return alert("Pick a file and vault");
 
-    // Get vault info (has AES key stored)
+    console.log(file,'file')
+    // Get vault info 
     const vault = vaults.find((v) => v.id === selectedVault);
+    console.log(vault)
     if (!vault) return alert("Vault not found");
 
     // Import vault key
@@ -131,13 +133,6 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
         {/* Metadata */}
         <div className="mt-4 space-y-3">
-          <input
-            type="text"
-            placeholder="File Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2"
-          />
           <textarea
             placeholder="Description"
             value={description}
