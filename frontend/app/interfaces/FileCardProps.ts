@@ -1,6 +1,6 @@
 export interface FileCardProps {
   name: string;
   date: string;
-  status?: "encrypted" | "shared" | "pending";
+  status?: "owned" | "shared"; 
   previewUrl?: string;
 }

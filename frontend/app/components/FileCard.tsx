@@ -5,14 +5,12 @@ import { FileCardProps } from "../interfaces/FileCardProps";
 export default function FileCard({ name, date, status, previewUrl }: FileCardProps) {
   const getStatusColor = () => {
     switch (status) {
-      case "encrypted":
-        return "bg-blue-600";
+      case "owned":
+        return "bg-blue-600 text-white";
       case "shared":
-        return "bg-green-600";
-      case "pending":
-        return "bg-red-500";
+        return "bg-green-600 text-white";
       default:
-        return "bg-gray-400";
+        return "bg-gray-400 text-white";
     }
   };
 
@@ -27,7 +25,7 @@ export default function FileCard({ name, date, status, previewUrl }: FileCardPro
         )}
         {status && (
           <span
-            className={`absolute top-2 right-2 text-xs text-gray-900 px-2 py-0.5 rounded-full ${getStatusColor()}`}
+            className={`absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full ${getStatusColor()}`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
@@ -36,8 +34,8 @@ export default function FileCard({ name, date, status, previewUrl }: FileCardPro
 
       {/* File info */}
       <div className="p-2">
-        <p className="text-sm font-medium truncate text-gray-400">{name}</p>
-        <p className="text-xs text-gray-400 text-bold">{date}</p>
+        <p className="text-sm font-medium truncate text-gray-800">{name}</p>
+        <p className="text-xs text-gray-500">{date}</p>
       </div>
     </div>
   );
