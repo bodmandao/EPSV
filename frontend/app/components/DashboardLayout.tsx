@@ -19,24 +19,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="p-6 text-blue-600 font-bold text-xl">Logo</div>
 
           <nav className="px-4 space-y-1">
-            <Link href={'/dashboard'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'/dashboard'} className="flex items-center text-gray-700 gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Home size={18} /> All Files
             </Link>
-            <Link href={'/vaults'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'/vaults'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Folder size={18} /> My Vaults
             </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'#'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} /> Shared with Me
             </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
               <Clock size={18} /> Recent
             </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
               <Trash2 size={18} /> Trash
             </Link>
 
             <div className="mt-4 text-xs text-gray-400 px-2">SYSTEM</div>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
               <span className="h-2 w-2 rounded-full bg-green-500"></span>
               Storage Health
             </Link>
