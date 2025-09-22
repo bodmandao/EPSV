@@ -47,13 +47,20 @@ export async function encryptFile(file: File, key: CryptoKey) {
   };
 }
 
-// Decrypt file
-export async function decryptFile(blob: Blob, key: CryptoKey, iv: number[]) {
-  const data = new Uint8Array(await blob.arrayBuffer());
+export async function decryptFile(
+  encryptedData: Uint8Array,
+  key: CryptoKey,
+  iv: Uint8Array
+) {
+  // Convert to regular ArrayBuffers efficiently
+  const safeIv = new Uint8Array(iv.slice());
+  const safeEncryptedData = new Uint8Array(encryptedData.slice());
+
   const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: new Uint8Array(iv) },
+    { name: "AES-GCM", iv: safeIv },
     key,
-    data
+    safeEncryptedData
   );
+
   return new Blob([decrypted]);
 }

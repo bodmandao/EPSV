@@ -118,13 +118,13 @@ export default function VaultGrid() {
         (vaultData || []).map(async (vault) => {
           const { data: fileData } = await supabase
             .from("files")
-            .select("id, file_name, preview_url")
+            .select("id, file_name")
             .eq("vault_id", vault.id.toString());
 
           // Get preview URLs for files
           const filesWithPreviews = await Promise.all(
             (fileData || []).slice(0, 4).map(async (f) => {
-              let previewUrl = f.preview_url;
+              let previewUrl = null
               
               // Use Unsplash if no valid preview URL
               if (!previewUrl || !isValidUrl(previewUrl)) {
@@ -151,7 +151,7 @@ export default function VaultGrid() {
       );
 
       setVaults(vaultsWithFiles);
-      setVisibleVaults(vaultsWithFiles.slice(0, 8)); // Show first 8 vaults initially
+      setVisibleVaults(vaultsWithFiles.slice(0, 8)); 
       setLoading(false);
     };
 

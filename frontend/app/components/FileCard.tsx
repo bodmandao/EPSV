@@ -1,8 +1,12 @@
 "use client";
 
 import { FileCardProps } from "../interfaces/FileCardProps";
+import { Download } from "lucide-react";
+import { useFileDownload } from "@/hooks/useFileDownload";
 
-export default function FileCard({ name, date, status, previewUrl }: FileCardProps) {
+export default function FileCard({ id, name, date, status, previewUrl }: FileCardProps) {
+  const { downloadFile } = useFileDownload();
+
   const getStatusColor = () => {
     switch (status) {
       case "owned":
@@ -33,9 +37,18 @@ export default function FileCard({ name, date, status, previewUrl }: FileCardPro
       </div>
 
       {/* File info */}
-      <div className="p-2">
-        <p className="text-sm font-medium truncate text-gray-800">{name}</p>
-        <p className="text-xs text-gray-500">{date}</p>
+      <div className="p-2 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium truncate text-gray-700">{name}</p>
+          <p className="text-xs text-gray-400">{date}</p>
+        </div>
+        <button
+          onClick={() => downloadFile(id!)}
+          className="p-1 text-indigo-600 hover:text-indigo-800"
+          title="Download file"
+        >
+          <Download size={16} />
+        </button>
       </div>
     </div>
   );

@@ -67,22 +67,30 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
       {/* Files in Vault */}
       <div>
         <p className="text-xs text-gray-400 mb-1">Files:</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {files.length > 0 ? (
             files.slice(0, 3).map((file) => (
-              <img
+              <div
                 key={file.id}
-                src={file.previewUrl}
-                alt={file.name}
-                className="w-10 h-10 rounded-md border object-cover"
+                className="flex flex-col items-center w-14"
                 title={file.name}
-              />
+              >
+                <img
+                  src={file.previewUrl}
+                  alt={file.name}
+                  className="w-10 h-10 rounded-md border object-cover mb-1"
+                />
+                <span className="text-[10px] text-gray-600 truncate w-full text-center">
+                  {file.name}
+                </span>
+              </div>
             ))
           ) : (
             <p className="text-xs text-gray-400 italic">No files yet</p>
           )}
         </div>
       </div>
+
 
       {/* Add Member Modal */}
       {showAddMember && (

@@ -82,6 +82,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
         currency,
         cid: fileCid,
         encrypted_key: vault.encrypted_key, 
+        iv,
         created_at: new Date().toISOString(),
       },
     ]);

@@ -101,6 +101,7 @@ export default function FileGrid() {
             f.owner_address === address ? "owned" : "shared";
           console.log(previewUrl)
           return {
+            id :f.id,
             name: f.file_name,
             date: new Date(f.created_at).toLocaleDateString(),
             status, 

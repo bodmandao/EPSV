@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { X } from "lucide-react";
+import { isAddress } from "viem";
 
 interface AddMemberModalProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ export default function AddMemberModal({ isOpen, onClose, vaultId }: AddMemberMo
   if (!isOpen) return null;
 
   const handleAddMember = async () => {
-    if (!address) return alert("Enter member address");
+    if (!address || !isAddress(address)) return alert("Enter a valid address");
 
     setLoading(true);
 
@@ -59,7 +60,6 @@ export default function AddMemberModal({ isOpen, onClose, vaultId }: AddMemberMo
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
-        {/* Close Button */}
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
           <X size={18} />
         </button>
@@ -71,7 +71,7 @@ export default function AddMemberModal({ isOpen, onClose, vaultId }: AddMemberMo
           placeholder="0x... wallet address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="w-full border rounded-md px-3 py-2 text-sm mb-4"
+          className="w-full border rounded-md px-3 py-2 text-[#1d3557] text-sm mb-4"
         />
 
         <button
