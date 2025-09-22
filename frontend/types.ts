@@ -37,9 +37,9 @@ export interface UseBalancesResponse {
 }
 
 export const defaultBalances: UseBalancesResponse = {
-  filBalance: 0n,
-  usdfcBalance: 0n,
-  warmStorageBalance: 0n,
+  filBalance: BigInt(0),
+  usdfcBalance: BigInt(0),
+  warmStorageBalance: BigInt(0),
   filBalanceFormatted: 0,
   usdfcBalanceFormatted: 0,
   warmStorageBalanceFormatted: 0,
@@ -48,12 +48,12 @@ export const defaultBalances: UseBalancesResponse = {
   isSufficient: false,
   isRateSufficient: false,
   isLockupSufficient: false,
-  rateNeeded: 0n,
-  totalLockupNeeded: 0n,
-  depositNeeded: 0n,
+  rateNeeded: BigInt(0),
+  totalLockupNeeded: BigInt(0),
+  depositNeeded: BigInt(0),
   currentRateAllowanceGB: 0,
   currentStorageGB: 0,
-  currentLockupAllowance: 0n,
+  currentLockupAllowance: BigInt(0),
 };
 
 /**
