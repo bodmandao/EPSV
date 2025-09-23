@@ -143,7 +143,7 @@ export default function VaultGrid() {
           return {
             id: vault.id,
             name: vault.name,
-            balance: vault.balance || "0 FIL",
+            balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 FIL",
             members: vault.members || [],
             files: filesWithPreviews,
           };

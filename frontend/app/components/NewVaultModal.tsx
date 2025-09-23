@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import { X } from "lucide-react";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { supabase } from "@/utils/supabase";
 import { generateVaultKey } from "@/utils/crypto";
-import { isAddress } from "viem";
+import { isAddress, parseEther, zeroAddress } from "viem";
+import { APPROVAL_ABI,CONTRACT_ABI,CONTRACT_ADDRESS } from "@/utils/contract";
 
 interface NewVaultModalProps {
   isOpen: boolean;
@@ -13,6 +14,12 @@ interface NewVaultModalProps {
 
 export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
   const { address } = useAccount();
+   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+
+  const { writeContractAsync } = useWriteContract();
+  const { isLoading: isTxLoading, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
+    hash: txHash,
+  });
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
@@ -42,40 +49,51 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
     setMembers([...members, newMember]);
     setNewMember("");
   };
-  const handleNext = async () => {
+
+ const handleNext = async () => {
     if (step < 4) return setStep(step + 1);
 
     if (!address) return alert("Connect your wallet");
+    if (funding.amount <= 0) return alert("Enter a valid amount");
 
     setIsDeploying(true);
 
     try {
-      // 1. Generate AES key
       const aesKey = await generateVaultKey();
 
-      // 2. Save to Supabase
+      const priceInWei = parseEther(funding.amount.toString());
+
+      const tx = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "deposit",
+        args: [zeroAddress, address, priceInWei], 
+        value: priceInWei,
+      });
+
+      setTxHash(tx);
+
+      console.log(tx,'tx')
       const { error } = await supabase.from("vaults").insert([
         {
           name,
           owner_address: address,
           members,
           funding,
-          encrypted_key: aesKey, // base64 AES key
+          encrypted_key: aesKey,
           created_at: new Date().toISOString(),
         },
       ]);
 
       if (error) throw error;
 
-      alert('vault created')
+      alert("✅ Vault funded & created!");
 
-      setTimeout(() => {
-        onClose();
-      }, 3000)
+      setTimeout(() => onClose(), 2000);
 
     } catch (err) {
       console.error(err);
-      alert("Error creating vault");
+      alert("❌ Error funding vault");
     } finally {
       setIsDeploying(false);
     }

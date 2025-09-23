@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Settings, Plus, Wallet } from "lucide-react";
 import AddMemberModal from "./AddMemberModal";
+import AddFundsModal from "./AddFundsModal";
 
 interface VaultCardProps {
   id: string;
@@ -14,6 +15,7 @@ interface VaultCardProps {
 
 export default function VaultCard({ id, name, balance, members, files }: VaultCardProps) {
   const [showAddMember, setShowAddMember] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -29,6 +31,7 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm text-gray-600">{balance}</p>
         <button
+          onClick={() => setShowAddFunds(true)}
           className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
           <Wallet size={14} />
@@ -97,6 +100,14 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
         <AddMemberModal
           isOpen={showAddMember}
           onClose={() => setShowAddMember(false)}
+          vaultId={id}
+        />
+      )}
+
+      {showAddFunds && (
+        <AddFundsModal
+          isOpen={showAddFunds}
+          onClose={() => setShowAddFunds(false)}
           vaultId={id}
         />
       )}
