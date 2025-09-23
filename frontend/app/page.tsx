@@ -7,6 +7,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner"; // Import Sonner
 
 export default function HomePage() {
   const { login } = usePrivy();
@@ -15,11 +16,39 @@ export default function HomePage() {
   const { authenticated } = usePrivy();
   const router = useRouter();
 
-    useEffect(() => {
+  useEffect(() => {
     if (isConnected || authenticated) {
       router.push("/dashboard");
     }
   }, [isConnected, authenticated, router]);
+
+  const handleSocialLogin = () => {
+    toast.info("Social login coming soon! Redirecting to wallet login...");
+    
+    // Small delay to show the toast message, then open wallet connect
+    setTimeout(() => {
+      if (openConnectModal) {
+        openConnectModal();
+      }
+    }, 1500);
+  };
+
+  const handleWalletLogin = () => {
+    if (openConnectModal) {
+      openConnectModal();
+    }
+  };
+
+  const handleExploreDashboard = () => {
+    if (isConnected || authenticated) {
+      router.push("/dashboard");
+    } else {
+      toast.info("Please connect your wallet first to explore the dashboard");
+      if (openConnectModal) {
+        openConnectModal();
+      }
+    }
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#1d3557] to-[#0b1d33] text-[#f1faee] font-inter flex flex-col">
@@ -42,18 +71,26 @@ export default function HomePage() {
           Secure. Private. Decentralized. Take full control of your sensitive
           data with Filecoin Onchain Cloud.
         </motion.p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap justify-center">
           <button
-            onClick={openConnectModal}
-            className="bg-[#2a9d8f] text-white hover:bg-[#21867b] rounded-2xl px-6 py-3 text-lg">
+            onClick={handleWalletLogin}
+            className="bg-[#2a9d8f] text-white hover:bg-[#21867b] rounded-2xl px-6 py-3 text-lg transition-colors duration-200"
+          >
             Sign in with Wallet
           </button>
           <button
-            onClick={() => login()}
-            className="bg-[#e76f51] text-white hover:bg-[#cf4b46] rounded-2xl px-6 py-3 text-lg">
+            onClick={handleSocialLogin}
+            className="bg-[#e76f51] text-white hover:bg-[#cf4b46] rounded-2xl px-6 py-3 text-lg transition-colors duration-200 relative group"
+          >
             Sign in with Social
+            <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs px-2 py-1 rounded-full animate-pulse">
+              Soon
+            </span>
           </button>
         </div>
+        <p className="text-sm text-[#a8dadc] mt-4 max-w-md">
+          🔒 Currently supporting wallet login only. Social login feature coming soon!
+        </p>
       </section>
 
       {/* Features Section */}
@@ -100,7 +137,10 @@ export default function HomePage() {
             Organize vaults, fund them with FIL, upload files, and share with
             complete privacy. EPSV puts you in charge.
           </p>
-          <button className="bg-[#2a9d8f] hover:bg-[#21867b] text-white rounded-2xl px-6 py-3">
+          <button 
+            onClick={handleExploreDashboard}
+            className="bg-[#2a9d8f] hover:bg-[#21867b] text-white rounded-2xl px-6 py-3 transition-colors duration-200"
+          >
             Explore Dashboard
           </button>
         </div>
@@ -132,12 +172,24 @@ export default function HomePage() {
           <h3 className="text-3xl font-bold mb-4">
             Ready to take control of your data?
           </h3>
-          <div className="flex gap-4 justify-center">
-            <button className="bg-[#2a9d8f] text-white rounded-2xl px-6 py-3">
+          <p className="text-[#a8dadc] mb-6">
+            Start with wallet login today. Social login coming soon!
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button 
+              onClick={handleWalletLogin}
+              className="bg-[#2a9d8f] text-white rounded-2xl px-6 py-3 hover:bg-[#21867b] transition-colors duration-200"
+            >
               Sign in with Wallet
             </button>
-            <button className="bg-[#e76f51] text-white rounded-2xl px-6 py-3">
+            <button 
+              onClick={handleSocialLogin}
+              className="bg-[#e76f51] text-white rounded-2xl px-6 py-3 hover:bg-[#cf4b46] transition-colors duration-200 relative group"
+            >
               Sign in with Social
+              <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs px-2 py-1 rounded-full animate-pulse">
+                Soon
+              </span>
             </button>
           </div>
         </motion.div>
@@ -147,13 +199,13 @@ export default function HomePage() {
       <footer className="py-8 border-t border-white/10 text-center text-sm text-[#a8dadc]">
         <p>© {new Date().getFullYear()} EPSV. All rights reserved.</p>
         <div className="flex gap-4 justify-center mt-2">
-          <a href="#" className="hover:text-white">
+          <a href="#" className="hover:text-white transition-colors duration-200">
             Docs
           </a>
-          <a href="#" className="hover:text-white">
+          <a href="#" className="hover:text-white transition-colors duration-200">
             GitHub
           </a>
-          <a href="#" className="hover:text-white">
+          <a href="#" className="hover:text-white transition-colors duration-200">
             Twitter
           </a>
         </div>

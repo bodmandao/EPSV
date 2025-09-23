@@ -9,6 +9,7 @@ import config from "@/app/config/wagmi";
 import { ModalProvider, useModal } from "./context/ModalContext";
 import { ConfettiProvider } from "@/providers/ConfettiProvider";
 import { SynapseProvider } from "@/providers/SynapseProvider";
+import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}>
                     <ModalProvider>
                       {children}
+                      <Toaster
+                        position="top-right"
+                        richColors
+                        closeButton
+                        duration={4000}
+                      />
                     </ModalProvider>
                   </PrivyProvider>
                 </SynapseProvider>
