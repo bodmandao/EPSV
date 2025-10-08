@@ -134,7 +134,7 @@ export default function HomePage() {
             Your data, your control
           </h2>
           <p className="text-[#a8dadc] mb-6">
-            Organize vaults, fund them with FIL, upload files, and share with
+            Organize vaults, fund them , upload files, and share with
             complete privacy. EPSV puts you in charge.
           </p>
           <button 
@@ -152,7 +152,7 @@ export default function HomePage() {
           className="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl"
         >
           <Image
-            src="/dashboard-preview.png"
+            src="/dashboard-preview.jpg"
             alt="Dashboard Preview"
             fill
             className="object-cover"
