@@ -69,7 +69,7 @@ export default function HomePage() {
           className="text-lg md:text-xl text-[#a8dadc] mb-8 max-w-2xl"
         >
           Secure. Private. Decentralized. Take full control of your sensitive
-          data with Filecoin Onchain Cloud.
+          data with 0G.
         </motion.p>
         <div className="flex gap-4 flex-wrap justify-center">
           <button
@@ -104,7 +104,7 @@ export default function HomePage() {
           {
             icon: "☁️",
             title: "Decentralized Storage",
-            desc: "Built on Filecoin Onchain Cloud for reliability.",
+            desc: "Built on 0G SDK for reliability.",
           },
           {
             icon: "⚡",

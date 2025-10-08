@@ -1,15 +1,12 @@
 "use client";
 
-import { ethers } from "ethers";
-import { Synapse } from "@filoz/synapse-sdk";
 import { supabase } from "@/utils/supabase";
-import { importKey } from "@/utils/crypto";
-import { decryptFile } from "@/utils/crypto";
+import { importKey, decryptFile } from "@/utils/crypto";
 
 export const useFileDownload = () => {
   const downloadFile = async (fileId: string) => {
     try {
-      // Fetch file metadata
+      //  Fetch metadata from Supabase
       const { data: file, error } = await supabase
         .from("files")
         .select("*")
@@ -17,16 +14,16 @@ export const useFileDownload = () => {
         .single();
 
       if (error) throw error;
-
       const { cid, encrypted_key, iv, file_name } = file;
 
-      const provider = new ethers.BrowserProvider((window as any).ethereum);
-      const synapse = await Synapse.create({ provider });
+      //  Fetch encrypted file bytes from OG route
+      const response = await fetch(`/api/get-from-og/${cid}`);
+      if (!response.ok) throw new Error("Failed to fetch file from OG");
 
-      const encryptedBytes: Uint8Array = await synapse.storage.download(cid);
+      const encryptedBytes = new Uint8Array(await response.arrayBuffer());
 
+      //  Decrypt locally
       const vaultKey = await importKey(encrypted_key);
-      console.log(encryptedBytes, vaultKey, iv)
 
       function base64ToUint8Array(base64: string): Uint8Array {
         const binaryString = atob(base64);
@@ -40,9 +37,10 @@ export const useFileDownload = () => {
       const decryptedBlob = await decryptFile(
         encryptedBytes,
         vaultKey,
-        base64ToUint8Array(iv) 
+        base64ToUint8Array(iv)
       );
 
+      // Trigger browser download
       const url = URL.createObjectURL(decryptedBlob);
       const link = document.createElement("a");
       link.href = url;

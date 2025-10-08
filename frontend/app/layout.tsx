@@ -7,8 +7,6 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import config from "@/app/config/wagmi";
 import { ModalProvider, useModal } from "./context/ModalContext";
-import { ConfettiProvider } from "@/providers/ConfettiProvider";
-import { SynapseProvider } from "@/providers/SynapseProvider";
 import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
@@ -17,11 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <ConfettiProvider>
           <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
               <RainbowKitProvider>
-                <SynapseProvider>
                   <PrivyProvider
                     config={{
                       loginMethods: ['email', 'google', 'twitter', 'discord'],
@@ -41,11 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       />
                     </ModalProvider>
                   </PrivyProvider>
-                </SynapseProvider>
               </RainbowKitProvider>
             </QueryClientProvider>
           </WagmiProvider>
-        </ConfettiProvider>
       </body>
     </html>
   );

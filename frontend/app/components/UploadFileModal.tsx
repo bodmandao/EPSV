@@ -2,9 +2,8 @@
 import { useState, useEffect } from "react";
 import { X, UploadCloud } from "lucide-react";
 import { useAccount } from "wagmi";
-import { useFileUpload } from "@/hooks/useFileUpload";
-import { encryptFile, importKey } from "@/utils/crypto"; 
-import { supabase } from "@/utils/supabase"; 
+import { encryptFile, importKey } from "@/utils/crypto";
+import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 interface UploadFileModalProps {
   isOpen: boolean;
@@ -24,22 +23,21 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   const [currency, setCurrency] = useState<"FIL" | "USDC">("FIL");
   const [vaults, setVaults] = useState<any[]>([]);
   const [selectedVault, setSelectedVault] = useState<string>("");
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
-  const { uploadFileMutation } = useFileUpload();
-  const { mutateAsync: uploadFile, isPending: isUploading } = uploadFileMutation;
 
   useEffect(() => {
     if (!address) return;
-    
+
     const fetchVaults = async () => {
       try {
         const { data, error } = await supabase
           .from("vaults")
           .select("*")
           .or(`owner_address.eq.${address},members.cs.{${address}}`);
-        
+
         if (error) throw error;
-        
+
         if (data) {
           setVaults(data);
           if (data.length > 0 && !selectedVault) {
@@ -51,7 +49,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
         toast.error("Failed to load vaults");
       }
     };
-    
+
     fetchVaults();
   }, [address, selectedVault]);
 
@@ -86,7 +84,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
   const handleFileSelect = (selectedFile: File | null) => {
     if (!selectedFile) return;
-    
+
     // Validate file size (e.g., 100MB limit)
     const maxSize = 100 * 1024 * 1024; // 100MB in bytes
     if (selectedFile.size > maxSize) {
@@ -95,12 +93,12 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
     }
 
     setFile(selectedFile);
-    
+
     // Auto-fill name if empty
     if (!name) {
       setName(selectedFile.name.replace(/\.[^/.]+$/, "")); // Remove extension
     }
-    
+
     toast.success(`"${selectedFile.name}" selected`);
   };
 
@@ -127,6 +125,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
     if (!validateForm()) return;
 
     try {
+      setIsUploading(true)
       const loadingToast = toast.loading("Preparing file for upload...");
 
       // Get vault info 
@@ -143,15 +142,25 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
       // Encrypt file
       const { encryptedFile, iv } = await encryptFile(file!, vaultKey);
-      toast.success("File encrypted. Uploading to Filecoin...", { id: loadingToast });
+      toast.success("File encrypted. Uploading to OG storage...", { id: loadingToast });
 
-      // Upload encrypted blob to Filecoin
-      const result = await uploadFile(encryptedFile);
-      const fileCid = result?.pieceCid;
+      // Upload encrypted OG
+      const formData = new FormData();
+      formData.append("file", new File([encryptedFile], file!.name));
 
-      if (!fileCid) {
-        throw new Error("Failed to get file CID from upload");
+      const res = await fetch("/api/upload-to-og", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || !result?.rootHash) {
+        console.error("Upload error:", result);
+        throw new Error(result?.error || "Failed to upload file to OG");
       }
+
+      const fileCid = result.rootHash;
 
       toast.success("File uploaded. Saving metadata...", { id: loadingToast });
 
@@ -167,7 +176,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
           price: permission !== "free" ? price : null,
           currency: permission !== "free" ? currency : null,
           cid: fileCid,
-          encrypted_key: vault.encrypted_key, 
+          encrypted_key: vault.encrypted_key,
           iv,
           created_at: new Date().toISOString(),
         },
@@ -179,6 +188,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
       }
 
       toast.success("✅ File uploaded successfully! 🎉", { id: loadingToast });
+      setIsUploading(false)
 
       // Reset form and close modal after success
       setTimeout(() => {
@@ -187,8 +197,10 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
       }, 1500);
 
     } catch (err) {
+      setIsUploading(false)
+
       console.error("Upload error:", err);
-      
+
       if (err instanceof Error) {
         if (err.message.includes("Database error")) {
           toast.error("Failed to save file metadata");
@@ -228,8 +240,8 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
         {/* Title bar */}
         <div className="flex justify-between items-center border-b pb-2 mb-4">
           <h2 className="text-lg font-bold text-[#1d3557]">Upload File</h2>
-          <button 
-            onClick={handleClose} 
+          <button
+            onClick={handleClose}
             className="text-gray-500 hover:text-[#e76f51]"
             disabled={isUploading}
           >
@@ -249,20 +261,19 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
         )}
 
         {/* Upload zone */}
-        <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-          file 
-            ? "border-green-300 bg-green-50/50" 
+        <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${file
+            ? "border-green-300 bg-green-50/50"
             : "border-[#a8dadc] bg-white/50 hover:bg-white/70"
-        }`}>
+          }`}>
           <UploadCloud size={32} className={file ? "text-green-500" : "text-[#1d3557]"} />
           <p className="mt-2 text-gray-600 text-center">
-            {file ? "File selected" : "Drop file or"} 
+            {file ? "File selected" : "Drop file or"}
             <span className="text-[#2a9d8f] font-semibold"> Browse</span>
           </p>
-          <input 
-            type="file" 
-            hidden 
-            onChange={(e) => handleFileSelect(e.target.files?.[0] || null)} 
+          <input
+            type="file"
+            hidden
+            onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
             disabled={isUploading}
           />
         </label>
@@ -328,8 +339,8 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
                 className="flex-1 rounded-lg border text-[#1d3557] border-gray-300 bg-white/50 px-3 py-2 focus:ring-2 focus:ring-[#2a9d8f]"
                 disabled={isUploading || tags.length >= 5}
               />
-              <button 
-                onClick={addTag} 
+              <button
+                onClick={addTag}
                 className="px-3 py-2 rounded-lg bg-[#2a9d8f] text-white hover:bg-[#21867a] disabled:opacity-50"
                 disabled={isUploading || tags.length >= 5}
               >
@@ -340,7 +351,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
               {tags.map((t) => (
                 <span key={t} className="px-3 py-1 bg-[#1d3557] text-white text-sm rounded-full flex items-center gap-1">
                   {t}
-                  <button 
+                  <button
                     onClick={() => removeTag(t)}
                     className="text-xs hover:text-gray-300"
                     disabled={isUploading}
@@ -407,8 +418,8 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
         {/* Footer */}
         <div className="flex justify-between mt-6">
-          <button 
-            onClick={handleClose} 
+          <button
+            onClick={handleClose}
             className="text-gray-600 hover:text-[#e76f51] disabled:opacity-50"
             disabled={isUploading}
           >

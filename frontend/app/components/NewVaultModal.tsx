@@ -28,7 +28,7 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
   const [newMember, setNewMember] = useState("");
   const [funding, setFunding] = useState({
     amount: 0,
-    currency: "FIL" as "FIL" | "USDC",
+    currency: "0G" as "0G" | "USDC",
   });
   const [isDeploying, setIsDeploying] = useState(false);
 
@@ -132,7 +132,7 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
       setTimeout(() => {
         setName("");
         setMembers([]);
-        setFunding({ amount: 0, currency: "FIL" });
+        setFunding({ amount: 0, currency: "0G" });
         setStep(1);
         onClose();
       }, 2000);
@@ -169,7 +169,7 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
     setName("");
     setMembers([]);
     setNewMember("");
-    setFunding({ amount: 0, currency: "FIL" });
+    setFunding({ amount: 0, currency: "0G" });
     setStep(1);
     onClose();
   };
@@ -294,13 +294,13 @@ export default function NewVaultModal({ isOpen, onClose }: NewVaultModalProps) {
                 onChange={(e) =>
                   setFunding({
                     ...funding,
-                    currency: e.target.value as "FIL" | "USDC",
+                    currency: e.target.value as "0G" | "USDC",
                   })
                 }
                 className="rounded-lg text-[#1d3557] border border-gray-300 bg-white/50 px-3 py-2 focus:ring-2 focus:ring-[#2a9d8f]"
                 disabled={isDeploying}
               >
-                <option value="FIL">FIL</option>
+                <option value="0G">0G</option>
                 <option value="USDC">USDC</option>
               </select>
             </div>

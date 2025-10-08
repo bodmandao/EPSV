@@ -67,7 +67,7 @@ export default function AddFundsModal({ isOpen, onClose, vaultId }: AddFundsModa
             onClose();
         } catch (err) {
             console.error("Deposit failed:", err);
-            
+
             // Check for specific error types
             if (err instanceof Error) {
                 if (err.message.includes("User rejected")) {
