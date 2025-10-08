@@ -1,20 +1,21 @@
 
-
 # 🔐 Encrypted Personal Storage Vault (EPSV)
 
 <img width="1024" height="1024" alt="epsv" src="https://github.com/user-attachments/assets/b1f5347c-044f-40dc-9302-4837dd66a9e4" />
 
+---
 
 ## Overview
 
-The **Encrypted Personal Storage Vault (EPSV)** is a decentralized, user-controlled storage system built on **Filecoin Onchain Cloud**. It empowers individuals and organizations to store, access, and manage **sensitive data (documents, contracts, IDs, credentials, etc.)** with strong encryption, **privacy guarantees**, and **monetization options**.
+The **Encrypted Personal Storage Vault (EPSV)** is a decentralized, user-controlled storage system built on the **OG Chain ecosystem**.
+It empowers individuals and organizations to store, access, and intelligently manage **sensitive data (documents, contracts, IDs, credentials, etc.)** with strong encryption, **AI assistance**, and **privacy guarantees** — powered by **OG Storage** and **OG Inference**.
 
-EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **encrypted access control** to ensure data is always:
+EPSV combines **end-to-end encryption**, **on-chain access control**, and **decentralized AI inference** to ensure data is always:
 
-* **Secure** (AES/RSA/Threshold cryptography, end-to-end encryption)
-* **Available** (warm storage + CDN for faster retrieval)
-* **Verifiable** (zero-knowledge proofs of possession)
-* **Monetizable** (native FIL/ERC-20 payments, subscription models, or pay-per-access)
+* **Secure** (AES-GCM client-side encryption, key isolation)
+* **Private** (no unencrypted data leaves the device)
+* **Intelligent** (privacy-safe AI tagging, summaries, and vault suggestions)
+* **Decentralized** (stored and verifiable on OG Storage)
 
 ---
 
@@ -22,121 +23,93 @@ EPSV combines **Proof of Data Possession (PDP)**, **onchain payments**, and **en
 
 ### 🔐 1. End-to-End Encryption
 
-* Data is encrypted **client-side** before being stored.
-* Uses **hybrid encryption**:
-
-  * Symmetric (AES-256) for data payloads.
-  * Asymmetric (RSA/ECIES) for key distribution.
-* Supports **threshold encryption** → data can only be decrypted if a quorum of authorized parties provide partial keys.
+* Every file is encrypted **client-side** with AES-GCM before upload.
+* Only the vault owner holds the decryption key — not even the network nodes can access content.
+* Supports multi-member access — shared vaults decryptable only by listed wallet addresses.
 
 ---
 
-### 📦 2. Warm Storage Integration
+### 📦 2. Decentralized Storage via OG Storage
 
-* Uses **FilecoinWarmStorageService** for **faster storage & retrieval**.
-* PDP verification ensures providers continuously prove possession of encrypted data.
-* Automatic **redundancy across multiple storage providers** to avoid single-point failures.
-
----
-
-### 3. Instant Access via CDN
-
-* **FilCDN** integration → blazing fast data delivery.
-* Users can retrieve encrypted files globally with **edge caching**.
-* Especially useful for **enterprise teams & personal document vaults**.
+* Integrates the **OG Storage SDK** for verifiable, cost-efficient uploads.
+* Files are stored on the **OG decentralized storage layer**, returning a **StorageHash** for proof and retrieval.
+* All data remains encrypted end-to-end.
 
 ---
 
-### 4. Onchain Payment Rails
+### 🧠 3. AI-Powered Intelligence via OG Inference
 
-* **Filecoin Pay integration** for:
+* Uses **OG Inference** for privacy-preserving, local-first intelligence.
+* Automatically generates context-aware metadata and smart tags for each file.
+* Enables **AI-assisted search, categorization, and summaries** without exposing file content.
+* Supports:
 
-  * One-time payments (e.g., pay-per-file download).
-  * **Streaming payments** (subscription storage plans).
-  * **Revenue sharing** (shared vault monetization).
-* Vault owners can **grant temporary or permanent access** to third parties via onchain payments.
-
----
-
-### 5. Access Control & Sharing
-
-* Access managed via **onchain ACL (Access Control Lists)**.
-* Grant/Revoke access through **smart contracts**.
-* Supports **delegated access** → e.g., grant a lawyer read-only access to specific encrypted documents.
-* Optional **zero-knowledge proofs** for **anonymous but verifiable access rights**.
+  * **AI Auto-Vaulting** → Suggests themed vaults (“Legal Docs,” “NFT Assets,” etc.)
+  * **Context-Aware Summaries** → Generates key points upon decryption (PDFs, videos, docs).
 
 ---
 
-### 6. Developer SDK Integration
+### 🗂 4. Vault & Access Management
 
-* **Synapse SDK** for developers to plug EPSV directly into their dApps.
-* Provides high-level APIs for:
-
-  * Encrypt → Store → Verify → Share
-  * Payment + subscription handling
-  * PDP checks + CDN retrieval
+* Each vault is tied to the user’s **OG wallet identity**.
+* Users can grant access to others by adding their wallet addresses.
+* Dashboard displays **Owned** and **Shared** vaults with transparent permission indicators.
+* Files are grouped and tagged for easy navigation and retrieval.
 
 ---
 
+### 💸 5. Payment and Access Controls
 
+* Vaults can be funded with **OG tokens** for storage or AI usage fees.
+* Files support **free**, **one-time fee**, or **subscription-based** access models.
+* Built-in balance checks ensure uploads or AI tasks only execute when funded.
+
+---
+
+### 🛠 6. Metadata & Off-Chain Sync Layer
+
+* Uses **Supabase** for off-chain metadata storage and quick querying.
+* Maintains tables for fast sync between on-chain and app states:
+
+  * `files → file_name, storage_hash, vault_id, owner_address, permissions, ai_tags, created_at`
+  * `vaults → vault_id, owner, members, encrypted_key`
+* Ensures responsive UI and smooth synchronization with OG network events.
+
+---
 
 ## Problem
 
-1. **Lack of Personal Data Privacy**
-
-   * Today, most personal storage (Google Drive, iCloud, Dropbox) is custodial.
-   * Users rely on centralized providers that can access or leak their sensitive data.
-
-2. **Fragmented Access Control**
-
-   * Sharing files with family, legal entities, or healthcare providers often means exposing everything.
-   * No fine-grained, cryptographic access policies.
-
-3. **Data Permanence & Trust**
-
-   * Centralized providers may delete accounts, lose data, or restrict access.
-   * Users don’t truly “own” their stored information.
-
-4. **Payments & Incentives Missing**
-
-   * Personal storage today lacks **trustless payment rails** for storage providers.
-   * Subscriptions and renewals depend on off-chain billing systems.
+1. **Centralized storage still dominates** — users depend on providers who can access or censor their data.
+2. **No privacy-safe AI systems** — most AI tools require sending raw data to centralized models.
+3. **Limited data ownership** — no unified way to control access, payments, or storage permanence.
 
 ---
 
-## Solution – EPSV
+## Solution – EPSV on OG
 
-**EPSV = Secure + Ownable + Payable Storage Vault**
+**EPSV = Encrypted + Intelligent + Decentralized Vault System**
 
-* **End-to-End Encryption**: User data is encrypted locally before leaving their device.
-* **Granular Access Control**: Users can share files via cryptographic keys & smart contracts.
-* **Filecoin Integration**:
-
-  * Uses **FilecoinWarmStorageService** for reliable, warm storage with PDP verification.
-  * Leverages **FilCDN** for fast retrieval of frequently accessed files.
-* **Integrated Payments (Filecoin Pay)**:
-
-  * Users pay FIL or ERC-20 for storage capacity.
-  * One-time, subscription, or streaming payments to maintain storage.
-* **Unified SDK (Synapse SDK)**: Simplifies developer integration across web and mobile.
+* **Fully encrypted storage** with OG Storage.
+* **AI-enhanced management** via OG Inference.
+* **OG wallet–based identity** for access and control.
+* **Optional monetization** for paid sharing and AI compute.
 
 ---
 
-## EPSV Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
-    A[User Device] -->|Encrypts File| B[EPSV DApp Frontend]
-    B --> C[Synapse SDK]
-    C --> D[FilecoinWarmStorageService]
-    D --> E[Filecoin Network]
-    D --> F[FilCDN for retrieval]
-    C --> G[Filecoin Pay - Smart Contracts]
-    G --> H[Storage Providers]
+    A[User Device] -->|Encrypts File| B[EPSV Frontend]
+    B --> C[OG Storage SDK]
+    C --> D[OG Storage Network]
+    B --> E[OG Inference]
+    B --> F[Supabase Metadata Layer]
+    F -->|Sync| B
 
     style A fill:#1d3557,stroke:#fff,color:#fff
-    style E fill:#2a9d8f,stroke:#fff,color:#fff
-    style H fill:#e76f51,stroke:#fff,color:#fff
+    style D fill:#2a9d8f,stroke:#fff,color:#fff
+    style E fill:#e76f51,stroke:#fff,color:#fff
 ```
 
 ---
@@ -148,70 +121,26 @@ sequenceDiagram
     participant User
     participant EPSVApp
     participant KeyManager
-    participant FilecoinStorage
+    participant OGStorage
 
     User->>EPSVApp: Upload File
-    EPSVApp->>KeyManager: Request Encryption Key
-    KeyManager->>EPSVApp: AES Key (wrapped with User’s Public Key)
-    EPSVApp->>EPSVApp: Encrypt File
-    EPSVApp->>FilecoinStorage: Store Encrypted File
-    FilecoinStorage->>EPSVApp: Storage Proof (PDP)
-    EPSVApp->>User: Vault Updated
-```
-
-* **Key Wrapping**: AES file keys encrypted with user’s public key.
-* **Delegated Access**: If user shares with someone, EPSV smart contract re-wraps the AES key with recipient’s public key.
-
----
-
-## Payment Flow (Filecoin Pay)
-
-```mermaid
-flowchart LR
-    U[User Wallet] -->|Approve| P[Filecoin Pay Contract]
-    P -->|Streaming or One-Time| S[Storage Provider]
-    S -->|Maintains Service| V[EPSV Vault]
-    V -->|Access Granted| U
-```
-
-* **Flexible Models**:
-
-  * One-time payments for fixed storage.
-  * Streaming payments (per GB / per day).
-  * Auto-renew via smart contracts.
-
----
-
-##  Retrieval Flow (via FilCDN)
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant EPSVApp
-    participant FilCDN
-    participant FilecoinStorage
-
-    User->>EPSVApp: Request File
-    EPSVApp->>FilCDN: Fetch Cached Copy?
-    alt Cached
-        FilCDN->>EPSVApp: Return Encrypted File
-    else Not Cached
-        FilCDN->>FilecoinStorage: Request File
-        FilecoinStorage->>FilCDN: Deliver Encrypted File
-        FilCDN->>EPSVApp: Return Encrypted File
-    end
-    EPSVApp->>User: Decrypt with User’s Private Key
+    EPSVApp->>KeyManager: Request AES-GCM Key
+    KeyManager->>EPSVApp: Returns Encrypted Key
+    EPSVApp->>EPSVApp: Encrypt File Locally
+    EPSVApp->>OGStorage: Upload Encrypted Blob
+    OGStorage->>EPSVApp: Return StorageHash
+    EPSVApp->>User: Update Vault
 ```
 
 ---
 
 ## Benefits
 
-1. **Privacy First** – No one but the user (or explicitly authorized recipients) can decrypt files.
-2. **Verifiable Storage** – PDP ensures that storage providers prove possession of files.
-3. **Efficient Retrieval** – FilCDN provides fast, decentralized caching.
-4. **Sustainable Economics** – Filecoin Pay ensures fair settlement between users & providers.
-5. **Developer Friendly** – Synapse SDK provides TypeScript/JS APIs to build on top.
+1. **User-Owned Encryption** – Only the vault owner or added members can decrypt files.
+2. **AI-Enhanced Experience** – OG Inference brings intelligent tagging and summaries.
+3. **Decentralized Proofs** – Verifiable storage via OG Storage hashes.
+4. **Monetizable Access** – Pay-per-access or subscription-based vaults.
+5. **Developer Ready** – SDKs make integrating encrypted AI storage seamless.
 
 ---
 
