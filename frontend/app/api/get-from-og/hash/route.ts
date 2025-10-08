@@ -4,10 +4,10 @@ import { Indexer } from '@0glabs/0g-ts-sdk';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ rootHash: string }> }
+  { params }: { params: { rootHash: string } }
 ) {
   try {
-    const { rootHash } = await params;
+    const { rootHash } =  params;
 
     const INDEXER_RPC = process.env.NEXT_PUBLIC_INDEXER_RPC!;
     const indexer = new Indexer(INDEXER_RPC);
