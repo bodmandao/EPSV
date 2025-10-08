@@ -4,23 +4,23 @@ import { Indexer } from '@0glabs/0g-ts-sdk';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { rootHash: string } }
+  { params }: { params: Promise<{ hash: string }> }
 ) {
   try {
-    const { rootHash } =  params;
+    const { hash } = await params;
 
     const INDEXER_RPC = process.env.NEXT_PUBLIC_INDEXER_RPC!;
     const indexer = new Indexer(INDEXER_RPC);
 
     const downloadsDir = '/tmp';
-    const outputPath = join(downloadsDir, `${rootHash}.file`);
+    const outputPath = join(downloadsDir, `${hash}.file`);
 
     const fs = await import('fs');
     if (!fs.existsSync(downloadsDir)) {
       fs.mkdirSync(downloadsDir, { recursive: true });
     }
 
-    const err = await indexer.download(rootHash, outputPath, true);
+    const err = await indexer.download(hash, outputPath, true);
     
     if (err !== null) {
       throw new Error(`Download error: ${err}`);
@@ -36,7 +36,7 @@ export async function GET(
     return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': contentType,
-        'Content-Disposition': `attachment; filename="${rootHash}.file"`,
+        'Content-Disposition': `attachment; filename="${hash}.file"`,
       },
     });
 
