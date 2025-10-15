@@ -4,6 +4,7 @@ import { X, UploadCloud, Sparkles } from "lucide-react";
 import { useAccount } from "wagmi";
 import { encryptFile, importKey } from "@/utils/crypto";
 import { supabase } from "@/utils/supabase";
+import { generatePreviewUrl } from "@/utils/previewGenerator";
 import { toast } from "sonner";
 interface UploadFileModalProps {
   isOpen: boolean;
@@ -24,7 +25,9 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   const [vaults, setVaults] = useState<any[]>([]);
   const [selectedVault, setSelectedVault] = useState<string>("");
   const [isUploading, setIsUploading] = useState<boolean>(false)
-   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
 
 
   useEffect(() => {
@@ -53,6 +56,25 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
     fetchVaults();
   }, [address, selectedVault]);
+
+  // Generate preview when file is selected
+  useEffect(() => {
+    const generatePreview = async () => {
+      if (file) {
+        try {
+          toast.loading("Generating preview image...");
+          const url = await generatePreviewUrl(file.name);
+          setPreviewUrl(url);
+          toast.success("Preview generated!");
+        } catch (error) {
+          console.error("Failed to generate preview:", error);
+          toast.error("Preview generation failed");
+        }
+      }
+    };
+
+    generatePreview();
+  }, [file]);
 
   if (!isOpen) return null;
 
@@ -94,6 +116,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
     }
 
     setFile(selectedFile);
+    setPreviewUrl("");
 
     // Auto-fill name if empty
     if (!name) {
@@ -103,7 +126,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
     toast.success(`"${selectedFile.name}" selected`);
   };
 
-   const generateMetadata = async () => {
+  const generateMetadata = async () => {
     if (!file || !selectedVault) return toast.error("Select file and vault first");
     setIsGenerating(true);
 
@@ -111,7 +134,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
     try {
       toast.loading("Generating metadata with OG Inference...");
 
-      const res:any = await fetch("/api/generate-metadata", {
+      const res: any = await fetch("/api/generate-metadata", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,7 +156,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
       toast.success("✨ Metadata generated!");
       setIsGenerating(false);
-      
+
     } catch (e: any) {
       console.error("AI metadata error:", e);
       toast.error("AI generation failed. Please fill manually.");
@@ -219,6 +242,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
           cid: fileCid,
           encrypted_key: vault.encrypted_key,
           iv,
+          preview_url: previewUrl,
           created_at: new Date().toISOString(),
         },
       ]);
@@ -303,8 +327,8 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
         {/* Upload zone */}
         <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${file
-            ? "border-green-300 bg-green-50/50"
-            : "border-[#a8dadc] bg-white/50 hover:bg-white/70"
+          ? "border-green-300 bg-green-50/50"
+          : "border-[#a8dadc] bg-white/50 hover:bg-white/70"
           }`}>
           <UploadCloud size={32} className={file ? "text-green-500" : "text-[#1d3557]"} />
           <p className="mt-2 text-gray-600 text-center">
@@ -340,7 +364,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
           )}
         </div>
 
-         {/* AI Metadata Button */}
+        {/* AI Metadata Button */}
         <div className="mt-4 flex justify-end">
           <button
             onClick={generateMetadata}
