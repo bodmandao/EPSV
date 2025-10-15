@@ -6,9 +6,8 @@ import OpenAI from "openai";
 const OG_PROVIDER = process.env.LLAMA_PROVIDER!
 
 function initializeOGServices() {
-  const privateKey = process.env.PRIVATE_KEY;
-  const rpcUrl =
-    process.env.NEXT_PUBLIC_OG_TESTNET_RPC_URL || "https://evmrpc-testnet.0g.ai";
+  const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY!;
+  const rpcUrl =process.env.NEXT_PUBLIC_OG_RPC_URL!
 
   if (!privateKey) throw new Error("Missing PRIVATE_KEY");
 

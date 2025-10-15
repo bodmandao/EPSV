@@ -129,7 +129,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
       setName(name || file.name.replace(/\.[^/.]+$/, ""));
       setDescription(description || "");
-      setTags(tags || []);
+      setTags(tagss || []);
 
       toast.success("✨ Metadata generated!");
     } catch (e: any) {

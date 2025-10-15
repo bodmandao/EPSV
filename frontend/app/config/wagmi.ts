@@ -1,5 +1,5 @@
 import { createConfig, http } from 'wagmi'
-import { base,sepolia } from 'viem/chains'
+import { base,sepolia,zeroGGalileoTestnet,zeroGMainnet } from 'viem/chains'
 import { injected, walletConnect } from 'wagmi/connectors'
 
 const Ogchain = {
