@@ -8,7 +8,7 @@ import { createApi } from 'unsplash-js';
 
 // Initialize Unsplash
 const unsplash = createApi({
-  accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || 'your_public_key_here',
+  accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY!,
 });
 
 // Helper function to validate URLs

@@ -55,7 +55,7 @@ export const generatePreviewUrl = async (fileName: string): Promise<string> => {
       query: keyword,
       count: 1,
     });
-    
+
     if (result.type === 'success') {
       const photo = result.response as unknown as Array<{ urls: { regular: string } }>;
       if (photo && photo[0]?.urls?.regular) {

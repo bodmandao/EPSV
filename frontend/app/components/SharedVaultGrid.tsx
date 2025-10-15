@@ -29,33 +29,33 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
 
+useEffect(() => {
+  if (!address) return;
 
-  useEffect(() => {
-    if (!address) return;
+  const fetchVaults = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("vaults")
+        .select("*")
+        .filter("members", "cs", `{${address}}`);
 
-    const fetchVaults = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("vaults")
-          .select("*")
-          .or(`owner_address.eq.${address},members.cs.{${address}}`);
+      if (error) throw error;
 
-        if (error) throw error;
-
-        if (data) {
-          setVaults(data);
-          if (data.length > 0 && !selectedVault) {
-            setSelectedVault(data[0].id); // Auto-select first vault
-          }
+      if (data) {
+        setVaults(data);
+        if (data.length > 0 && !selectedVault) {
+          setSelectedVault(data[0].id); // Auto-select first vault
         }
-      } catch (error) {
-        console.error("Error fetching vaults:", error);
-        toast.error("Failed to load vaults");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching vaults:", error);
+      toast.error("Failed to load vaults");
+    }
+  };
 
-    fetchVaults();
-  }, [address, selectedVault]);
+  fetchVaults();
+}, [address, selectedVault]);
+
 
   // Generate preview when file is selected
 useEffect(() => {
