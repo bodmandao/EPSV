@@ -3,11 +3,7 @@ import { ethers } from "ethers";
 import { createZGComputeNetworkBroker } from "@0glabs/0g-serving-broker";
 import OpenAI from "openai";
 
-const OFFICIAL_PROVIDERS = {
-  "llama-3.3-70b-instruct":
-    process.env.OG_PROVIDER_LLAMA ||
-    "0xf07240Efa67755B5311bc75784a061eDB47165Dd",
-};
+const OG_PROVIDER = process.env.LLAMA_PROVIDER!
 
 function initializeOGServices() {
   const privateKey = process.env.PRIVATE_KEY;
@@ -28,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     const { signer } = initializeOGServices();
     const broker = await createZGComputeNetworkBroker(signer);
-    const providerAddress = OFFICIAL_PROVIDERS["llama-3.3-70b-instruct"];
+    const providerAddress = OG_PROVIDER
 
     try {
       await broker.inference.acknowledgeProviderSigner(providerAddress);
