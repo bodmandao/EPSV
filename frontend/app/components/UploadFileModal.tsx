@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { X, UploadCloud } from "lucide-react";
+import { X, UploadCloud, Sparkles } from "lucide-react";
 import { useAccount } from "wagmi";
 import { encryptFile, importKey } from "@/utils/crypto";
 import { supabase } from "@/utils/supabase";
@@ -24,6 +24,7 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   const [vaults, setVaults] = useState<any[]>([]);
   const [selectedVault, setSelectedVault] = useState<string>("");
   const [isUploading, setIsUploading] = useState<boolean>(false)
+   const [isGenerating, setIsGenerating] = useState(false);
 
 
   useEffect(() => {
@@ -101,6 +102,44 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
 
     toast.success(`"${selectedFile.name}" selected`);
   };
+
+   const generateMetadata = async () => {
+    if (!file || !selectedVault) return toast.error("Select file and vault first");
+    setIsGenerating(true);
+
+    const vault = vaults.find((v) => v.id === selectedVault);
+    try {
+      toast.loading("Generating metadata with OG Inference...");
+
+      const res:any = await fetch("/api/generate-metadata", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultName: vault.name,
+          fileName: file.name,
+          context: `This is a file in the ${vault.name} vault, possibly related to ${tags.join(", ") || "general content"}.`,
+        }),
+      });
+
+      const data = await res.json();
+      console.log(data)
+      if (!data.success) throw new Error(data.error);
+
+      const { name, description, tagss } = data.metadata;
+
+      setName(name || file.name.replace(/\.[^/.]+$/, ""));
+      setDescription(description || "");
+      setTags(tags || []);
+
+      toast.success("✨ Metadata generated!");
+    } catch (e: any) {
+      console.error("AI metadata error:", e);
+      toast.error("AI generation failed. Please fill manually.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
 
   const validateForm = (): boolean => {
     if (!file) {
@@ -297,6 +336,18 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
           {vaults.length === 0 && (
             <p className="text-xs text-red-500 mt-1">No vaults available. Create a vault first.</p>
           )}
+        </div>
+
+         {/* AI Metadata Button */}
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={generateMetadata}
+            disabled={!file || !selectedVault || isGenerating}
+            className="flex items-center gap-2 bg-[#2a9d8f] text-white px-3 py-2 rounded-lg hover:bg-[#21867a] disabled:opacity-50"
+          >
+            <Sparkles size={16} />
+            {isGenerating ? "Generating..." : "Auto-generate Metadata"}
+          </button>
         </div>
 
         {/* Metadata */}

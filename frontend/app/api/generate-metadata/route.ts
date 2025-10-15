@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     {
       "name": "...",
       "description": "...",
-      "tags": ["...", "..."]
+      "tagss": ["...", "..."]
     }
     `;
 
