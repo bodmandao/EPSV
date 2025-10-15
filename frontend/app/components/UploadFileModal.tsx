@@ -132,6 +132,8 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
       setTags(tagss || []);
 
       toast.success("✨ Metadata generated!");
+      setIsGenerating(false);
+      
     } catch (e: any) {
       console.error("AI metadata error:", e);
       toast.error("AI generation failed. Please fill manually.");
