@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Settings, Plus, Wallet } from "lucide-react";
 import AddMemberModal from "./AddMemberModal";
 import AddFundsModal from "./AddFundsModal";
+import VaultInsightsModal from "./VaultInsightsModal";
 
 interface VaultCardProps {
   id: string;
@@ -16,6 +17,7 @@ interface VaultCardProps {
 export default function VaultCard({ id, name, balance, members, files }: VaultCardProps) {
   const [showAddMember, setShowAddMember] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -86,6 +88,21 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
                 <span className="text-[10px] text-gray-600 truncate w-full text-center">
                   {file.name}
                 </span>
+
+                <button
+                  onClick={() => setShowInsights(true)}
+                  className="bg-white/20 hover:bg-white/30 text-xs px-3 py-1 rounded-md"
+                >
+                  🔍 AI Insights
+                </button>
+
+                {showInsights && (
+                  <VaultInsightsModal
+                    vaultName={name}
+                    fileName={file.name}
+                    onClose={() => setShowInsights(false)}
+                  />
+                )}
               </div>
             ))
           ) : (
@@ -111,6 +128,8 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
           vaultId={id}
         />
       )}
+
+
     </div>
   );
 }
