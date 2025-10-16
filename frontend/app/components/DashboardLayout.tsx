@@ -25,7 +25,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Link href={'/vaults'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Folder size={18} /> My Vaults
             </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <Link href={'/shared'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} /> Shared with Me
             </Link>
             <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">

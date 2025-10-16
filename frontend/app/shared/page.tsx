@@ -1,6 +1,7 @@
 import DashboardLayout from "@/app/components/DashboardLayout";
 import CreateVaultBanner from "@/app/components/CreateVaultBanner";
 import VaultGrid from "@/app/components/VaultGrid";
+import SharedVaultGrid from "../components/SharedVaultGrid";
 
 export default function VaultsPage() {
   return (
@@ -13,7 +14,7 @@ export default function VaultsPage() {
       </div>
 
       <CreateVaultBanner />
-      <VaultGrid />
+      <SharedVaultGrid />
     </DashboardLayout>
   );
 }
