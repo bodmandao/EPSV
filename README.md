@@ -10,6 +10,9 @@ SCREENSHOTS
 <img width="1920" height="1080" alt="Screenshot (6)" src="https://github.com/user-attachments/assets/d1d23cee-f739-48e4-a02d-e8d11df5840a" />
 <img width="1920" height="1080" alt="Screenshot (10)" src="https://github.com/user-attachments/assets/b3c8d0a5-bfad-4407-98eb-73c067b811ba" />
 
+<img width="1920" height="1080" alt="Screenshot (12)" src="https://github.com/user-attachments/assets/bd908f53-5321-4f41-9c36-ca60d6aac078" />
+
+
 # 🔐 Encrypted Personal Storage Vault (EPSV)
 
 <img width="1024" height="1024" alt="epsv" src="https://github.com/user-attachments/assets/b1f5347c-044f-40dc-9302-4837dd66a9e4" />
