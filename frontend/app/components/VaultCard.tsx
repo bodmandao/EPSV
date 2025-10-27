@@ -6,6 +6,7 @@ import AddMemberModal from "./AddMemberModal";
 import AddFundsModal from "./AddFundsModal";
 import VaultInsightsModal from "./VaultInsightsModal";
 import DeleteVaultModal from "./DeleteVaultModal";
+import { useAccount } from "wagmi";
 
 interface VaultCardProps {
   id: string;
@@ -13,15 +14,27 @@ interface VaultCardProps {
   balance: string;
   members: string[];
   files: { id: string; name: string; previewUrl: string }[];
+  owner: string; 
   onVaultUpdate?: () => void;
 }
 
-export default function VaultCard({ id, name, balance, members, files, onVaultUpdate }: VaultCardProps) {
+export default function VaultCard({ 
+  id, 
+  name, 
+  balance, 
+  members, 
+  files, 
+  owner,
+  onVaultUpdate 
+}: VaultCardProps) {
   const [showAddMember, setShowAddMember] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [showInsights, setShowInsights] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  
+  const { address } = useAccount();
+  const isOwner = address?.toLowerCase() === owner.toLowerCase();
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -32,20 +45,29 @@ export default function VaultCard({ id, name, balance, members, files, onVaultUp
 
   const handleDeleteSuccess = () => {
     if (onVaultUpdate) {
-      onVaultUpdate(); 
+      onVaultUpdate();
     }
   };
 
   return (
     <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition group relative">
-      {/* Delete Button*/}
-      <button
-        onClick={() => setShowDeleteModal(true)}
-        className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
-        title="Delete Vault"
-      >
-        <Trash2 size={14} />
-      </button>
+      {/* Delete Button - Only show for owner */}
+      {isOwner && (
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
+          title="Delete Vault"
+        >
+          <Trash2 size={14} />
+        </button>
+      )}
+
+      {/* Owner Badge */}
+      {isOwner && (
+        <div className="absolute -top-2 left-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+          Owner
+        </div>
+      )}
 
       {/* Vault Header */}
       <div className="flex justify-between items-start mb-3">
@@ -69,22 +91,30 @@ export default function VaultCard({ id, name, balance, members, files, onVaultUp
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
           <p className="text-xs text-gray-400">Members:</p>
-          <button
-            onClick={() => setShowAddMember(true)}
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
-          >
-            <Plus size={12} />
-            Add
-          </button>
+          {isOwner && (
+            <button
+              onClick={() => setShowAddMember(true)}
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+            >
+              <Plus size={12} />
+              Add
+            </button>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           {members.length > 0 ? (
             members.map((member, idx) => (
               <span
                 key={idx}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-md font-mono"
+                className={`px-2 py-1 text-xs rounded-md font-mono ${
+                  member.toLowerCase() === owner.toLowerCase()
+                    ? 'bg-green-100 text-green-800 border border-green-200'
+                    : 'bg-gray-100 text-gray-700'
+                }`}
+                title={member.toLowerCase() === owner.toLowerCase() ? 'Owner' : 'Member'}
               >
                 {shorten(member)}
+                {member.toLowerCase() === owner.toLowerCase() && ' ⭐'}
               </span>
             ))
           ) : (
@@ -110,7 +140,7 @@ export default function VaultCard({ id, name, balance, members, files, onVaultUp
                     alt={file.name}
                     className="w-12 h-12 rounded-md border object-cover mb-1"
                   />
-                  {/* AI Insights Button */}
+                  {/* AI Insights Button - Appears on hover */}
                   <button
                     onClick={() => handleInsightsClick(file.name)}
                     className="absolute -bottom-1 -right-1 bg-indigo-600 hover:bg-indigo-700 text-white p-1 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100"
@@ -174,6 +204,8 @@ export default function VaultCard({ id, name, balance, members, files, onVaultUp
           onClose={() => setShowDeleteModal(false)}
           vaultId={id}
           vaultName={name}
+          vaultOwner={owner}
+          vaultBalance={balance}
           onDeleteSuccess={handleDeleteSuccess}
         />
       )}
