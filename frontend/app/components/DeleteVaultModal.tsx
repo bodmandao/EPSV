@@ -62,7 +62,6 @@ export default function DeleteVaultModal({
 
     if (vaultError) throw vaultError;
 
-    // Mark associated files as deleted
     const { error: filesError } = await supabase
       .from("files")
       .update({
