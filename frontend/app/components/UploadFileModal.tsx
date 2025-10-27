@@ -58,25 +58,25 @@ export default function UploadFileModal({ isOpen, onClose }: UploadFileModalProp
   }, [address, selectedVault]);
 
   // Generate preview when file is selected
-useEffect(() => {
-  const generatePreview = async () => {
-    if (file) {
-      const toastId = toast.loading("Generating preview image...");
-      try {
-        const url = await generatePreviewUrl(file.name);
-        setPreviewUrl(url);
-        toast.success("Preview generated!");
-      } catch (error) {
-        console.error("Failed to generate preview:", error);
-        toast.error("Preview generation failed");
-      } finally {
-        toast.dismiss(toastId); 
+  useEffect(() => {
+    const generatePreview = async () => {
+      if (file) {
+        const toastId = toast.loading("Generating preview image...");
+        try {
+          const url = await generatePreviewUrl(file.name);
+          setPreviewUrl(url);
+          toast.success("Preview generated!");
+        } catch (error) {
+          console.error("Failed to generate preview:", error);
+          toast.error("Preview generation failed");
+        } finally {
+          toast.dismiss(toastId);
+        }
       }
-    }
-  };
+    };
 
-  generatePreview();
-}, [file]);
+    generatePreview();
+  }, [file]);
 
   if (!isOpen) return null;
 
@@ -133,6 +133,7 @@ useEffect(() => {
     setIsGenerating(true);
 
     const vault = vaults.find((v) => v.id === selectedVault);
+    const toastId = toast.loading("Generating metadata with OG Inference...");
     try {
       toast.loading("Generating metadata with OG Inference...");
 
@@ -147,7 +148,6 @@ useEffect(() => {
       });
 
       const data = await res.json();
-      console.log(data)
       if (!data.success) throw new Error(data.error);
 
       const { name, description, tagss } = data.metadata;
@@ -163,6 +163,7 @@ useEffect(() => {
       console.error("AI metadata error:", e);
       toast.error("AI generation failed. Please fill manually.");
     } finally {
+      toast.dismiss(toastId)
       setIsGenerating(false);
     }
   };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, Plus, Wallet } from "lucide-react";
+import { Settings, Plus, Wallet, Eye } from "lucide-react";
 import AddMemberModal from "./AddMemberModal";
 import AddFundsModal from "./AddFundsModal";
 import VaultInsightsModal from "./VaultInsightsModal";
@@ -18,8 +18,14 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
   const [showAddMember, setShowAddMember] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [showInsights, setShowInsights] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+
+  const handleInsightsClick = (fileName: string) => {
+    setSelectedFile(fileName);
+    setShowInsights(true);
+  };
 
   return (
     <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition">
@@ -71,38 +77,43 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
 
       {/* Files in Vault */}
       <div>
-        <p className="text-xs text-gray-400 mb-1">Files:</p>
+        <p className="text-xs text-gray-400 mb-2">Files:</p>
         <div className="flex flex-wrap gap-3">
           {files.length > 0 ? (
             files.slice(0, 3).map((file) => (
               <div
                 key={file.id}
-                className="flex flex-col items-center w-14"
-                title={file.name}
+                className="flex flex-col items-center w-16 group relative"
               >
-                <img
-                  src={file.previewUrl}
-                  alt={file.name}
-                  className="w-10 h-10 rounded-md border object-cover mb-1"
-                />
-                <span className="text-[10px] text-gray-600 truncate w-full text-center">
+                {/* File Preview */}
+                <div className="relative">
+                  <img
+                    src={file.previewUrl}
+                    alt={file.name}
+                    className="w-12 h-12 rounded-md border object-cover mb-1"
+                  />
+                  {/* AI Insights Button - Appears on hover */}
+                  <button
+                    onClick={() => handleInsightsClick(file.name)}
+                    className="absolute -bottom-1 -right-1 bg-indigo-600 hover:bg-indigo-700 text-white p-1 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100"
+                    title="AI Insights"
+                  >
+                    <Eye size={10} />
+                  </button>
+                </div>
+                
+                {/* File Name */}
+                <span className="text-[10px] text-gray-600 truncate w-full text-center mb-1">
                   {file.name}
                 </span>
 
+                {/* Fallback Button for mobile/touch devices */}
                 <button
-                  onClick={() => setShowInsights(true)}
-                  className="bg-white/20 hover:bg-white/30 text-xs px-3 py-1 rounded-md"
+                  onClick={() => handleInsightsClick(file.name)}
+                  className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-md transition-colors group-hover:hidden"
                 >
-                  🔍 AI Insights
+                  Insights
                 </button>
-
-                {showInsights && (
-                  <VaultInsightsModal
-                    vaultName={name}
-                    fileName={file.name}
-                    onClose={() => setShowInsights(false)}
-                  />
-                )}
               </div>
             ))
           ) : (
@@ -111,8 +122,7 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
         </div>
       </div>
 
-
-      {/* Add Member Modal */}
+      {/* Modals */}
       {showAddMember && (
         <AddMemberModal
           isOpen={showAddMember}
@@ -129,7 +139,16 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
         />
       )}
 
-
+      {showInsights && (
+        <VaultInsightsModal
+          vaultName={name}
+          fileName={selectedFile || ""}
+          onClose={() => {
+            setShowInsights(false);
+            setSelectedFile(null);
+          }}
+        />
+      )}
     </div>
   );
 }
