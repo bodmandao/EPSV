@@ -4,19 +4,30 @@ import { ReactNode } from "react";
 import { useModal } from "../context/ModalContext";
 import { Search, Upload, PlusCircle, Home, Folder, Share2, Clock, Trash2, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-   const { openModal } = useModal();
-     const { address } = useAccount();
+  const { openModal } = useModal();
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
+
+  const handleDisconnect = () => {
+    disconnect();
+
+  };
+
+  if (!address) {
+    return null; // Don't show button if not connected
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r flex flex-col justify-between">
         <div>
-          <div className="p-6 text-blue-600 font-bold text-xl">Logo</div>
+          <div className="p-6 text-blue-600 font-bold text-xl">ESPV</div>
 
           <nav className="px-4 space-y-1">
             <Link href={'/dashboard'} className="flex items-center text-gray-700 gap-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
@@ -28,10 +39,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Link href={'/shared'} className="flex items-center gap-2 p-2 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
               <Share2 size={18} /> Shared with Me
             </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
+            {/* <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
               <Clock size={18} /> Recent
-            </Link>
-            <Link href={'#'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
+            </Link> */}
+            <Link href={'/trash'} className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-gray-100 cursor-pointer">
               <Trash2 size={18} /> Trash
             </Link>
 
@@ -45,10 +56,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         {/* Bottom buttons */}
         <div className="space-y-2 p-4">
-          <button className="w-full bg-blue-600 text-white p-2 rounded-lg">Account Balance</button>
-          <button className="w-full bg-blue-600 text-white p-2 rounded-lg">Settings</button>
-          <button className="w-full bg-red-500 text-white p-2 rounded-lg flex items-center justify-center gap-2">
-            <LogOut size={16} /> Log Out
+          {/* <button className="w-full bg-blue-600 text-white p-2 rounded-lg">Account Balance</button> */}
+          {/* <button className="w-full bg-blue-600 text-white p-2 rounded-lg">Settings</button> */}
+          <button
+            onClick={handleDisconnect}
+            className="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
+          >
+            <LogOut size={16} />
+            Logout
           </button>
         </div>
       </aside>
@@ -66,16 +81,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="flex gap-2">
-             <ConnectButton  accountStatus="address" />
-            
-            <button 
-             onClick={() => openModal("newVault")}
-             className="flex items-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+            <ConnectButton accountStatus="address" />
+
+            <button
+              onClick={() => openModal("newVault")}
+              className="flex items-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
               <PlusCircle size={16} /> New Vault
             </button>
 
-            <button  onClick={() => openModal("uploadFile")}
-             className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
+            <button onClick={() => openModal("uploadFile")}
+              className="flex items-center gap-1 bg-gray-600 px-3 py-2 rounded-lg text-sm">
               <Upload size={16} /> Upload
             </button>
           </div>

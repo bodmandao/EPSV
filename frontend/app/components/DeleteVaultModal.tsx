@@ -34,54 +34,57 @@ export default function DeleteVaultModal({
     const { writeContractAsync, isPending } = useWriteContract();
 
   const handleDelete = async () => {
-    if (!isOwner) {
-      toast.error("Only the vault owner can delete this vault");
-      return;
+  if (!isOwner) {
+    toast.error("Only the vault owner can delete this vault");
+    return;
+  }
+
+  setIsDeleting(true);
+  
+  try {
+    // Withdraw funds from the vault
+    if (vaultBalance && parseFloat(vaultBalance) > 0) {
+      await withdrawVaultFunds(vaultId, address!);
     }
 
-    setIsDeleting(true);
-    
-    try {
-      // withdraw funds from the 
-      if (vaultBalance && parseFloat(vaultBalance) > 0) {
-        await withdrawVaultFunds(vaultId, address!);
-      }
+    // Soft delete the vault and reset funding to zero
+    const { error: vaultError } = await supabase
+      .from("vaults")
+      .update({
+        status: 'deleted',
+        deleted_at: new Date().toISOString(),
+        funding: {
+          amount: 0,
+          currency: "OG" 
+        }
+      })
+      .eq("id", vaultId);
 
-      // soft delete the vault
-      const { error: vaultError } = await supabase
-        .from("vaults")
-        .update({
-          status: 'deleted',
-          deleted_at: new Date().toISOString(),
-        })
-        .eq("id", vaultId);
+    if (vaultError) throw vaultError;
 
-      if (vaultError) throw vaultError;
+    // Mark associated files as deleted
+    const { error: filesError } = await supabase
+      .from("files")
+      .update({
+        status: 'deleted',
+        deleted_at: new Date().toISOString(),
+      })
+      .eq("vault_id", vaultId);
 
-      //  Mark associated files as deleted
-      const { error: filesError } = await supabase
-        .from("files")
-        .update({
-          status: 'deleted',
-          deleted_at: new Date().toISOString(),
-        })
-        .eq("vault_id", vaultId);
-
-      if (filesError) {
-        console.error('Error updating files:', filesError);
-      }
-
-      toast.success('Vault deleted and funds withdrawn');
-      onDeleteSuccess();
-      onClose();
-    } catch (error) {
-      console.error('Error deleting vault:', error);
-      toast.error('Failed to delete vault');
-    } finally {
-      setIsDeleting(false);
+    if (filesError) {
+      console.error('Error updating files:', filesError);
     }
-  };
 
+    toast.success('Vault deleted and funds withdrawn');
+    onDeleteSuccess();
+    onClose();
+  } catch (error) {
+    console.error('Error deleting vault:', error);
+    toast.error('Failed to delete vault');
+  } finally {
+    setIsDeleting(false);
+  }
+};
   const withdrawVaultFunds = async (vaultId: string, ownerAddress: string) => {
     try {
       // Get vault details including the token and balance
