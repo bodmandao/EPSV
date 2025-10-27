@@ -23,19 +23,32 @@ export default function FileGrid() {
         return;
       }
 
-      const formatted = await Promise.all(
-        data.map(async (f: any) => {
-          const status: "owned" | "shared" | undefined =
-            f.owner_address === address ? "owned" : "shared";
-          return {
+      const formatted: FileCardProps[] = [];
+      
+      for (const f of data) {
+        // Check if user owns the file
+        if (f.owner_address === address) {
+          formatted.push({
             id: f.id,
             name: f.file_name,
             date: new Date(f.created_at).toLocaleDateString(),
-            status,
+            status: "owned",
             previewUrl: f.previewUrl,
-          };
-        })
-      );
+          });
+          continue;
+        }
+        
+        // Check if user is in the members array for shared files
+        if (f.members && Array.isArray(f.members) && f.members.includes(address)) {
+          formatted.push({
+            id: f.id,
+            name: f.file_name,
+            date: new Date(f.created_at).toLocaleDateString(),
+            status: "shared",
+            previewUrl: f.previewUrl,
+          });
+        }
+      }
 
       setFiles(formatted);
       setLoading(false);
