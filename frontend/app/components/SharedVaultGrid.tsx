@@ -83,6 +83,7 @@ interface Vault {
   balance: string;
   members: string[];
   files: { id: string; name: string; previewUrl: string }[];
+  owner : string
 }
 
 export default function SharedVaultGrid() {
@@ -146,6 +147,7 @@ export default function SharedVaultGrid() {
             balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 FIL",
             members: vault.members || [],
             files: filesWithPreviews,
+            owner : vault.owner_address
           };
         })
       );
