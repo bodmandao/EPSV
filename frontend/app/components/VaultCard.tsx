@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, Plus, Wallet, Eye } from "lucide-react";
+import { Settings, Plus, Wallet, Eye, Trash2 } from "lucide-react";
 import AddMemberModal from "./AddMemberModal";
 import AddFundsModal from "./AddFundsModal";
 import VaultInsightsModal from "./VaultInsightsModal";
+import DeleteVaultModal from "./DeleteVaultModal";
 
 interface VaultCardProps {
   id: string;
@@ -12,12 +13,14 @@ interface VaultCardProps {
   balance: string;
   members: string[];
   files: { id: string; name: string; previewUrl: string }[];
+  onVaultUpdate?: () => void;
 }
 
-export default function VaultCard({ id, name, balance, members, files }: VaultCardProps) {
+export default function VaultCard({ id, name, balance, members, files, onVaultUpdate }: VaultCardProps) {
   const [showAddMember, setShowAddMember] = useState(false);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [showInsights, setShowInsights] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -27,8 +30,23 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
     setShowInsights(true);
   };
 
+  const handleDeleteSuccess = () => {
+    if (onVaultUpdate) {
+      onVaultUpdate(); 
+    }
+  };
+
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition">
+    <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition group relative">
+      {/* Delete Button*/}
+      <button
+        onClick={() => setShowDeleteModal(true)}
+        className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
+        title="Delete Vault"
+      >
+        <Trash2 size={14} />
+      </button>
+
       {/* Vault Header */}
       <div className="flex justify-between items-start mb-3">
         <h4 className="text-sm font-semibold text-gray-800 truncate">{name}</h4>
@@ -92,7 +110,7 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
                     alt={file.name}
                     className="w-12 h-12 rounded-md border object-cover mb-1"
                   />
-                  {/* AI Insights Button - Appears on hover */}
+                  {/* AI Insights Button */}
                   <button
                     onClick={() => handleInsightsClick(file.name)}
                     className="absolute -bottom-1 -right-1 bg-indigo-600 hover:bg-indigo-700 text-white p-1 rounded-full shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100"
@@ -147,6 +165,16 @@ export default function VaultCard({ id, name, balance, members, files }: VaultCa
             setShowInsights(false);
             setSelectedFile(null);
           }}
+        />
+      )}
+
+      {showDeleteModal && (
+        <DeleteVaultModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          vaultId={id}
+          vaultName={name}
+          onDeleteSuccess={handleDeleteSuccess}
         />
       )}
     </div>
