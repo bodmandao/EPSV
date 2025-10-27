@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Trash2, RotateCcw, Search } from "lucide-react";
 import { supabase } from "@/utils/supabase"; 
 import { toast } from "sonner";
+import { useAccount } from "wagmi";
 
 interface DeletedVault {
   id: string;
@@ -20,6 +21,7 @@ export default function TrashPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const {address} = useAccount()
   useEffect(() => {
     loadDeletedVaults();
   }, []);
@@ -61,41 +63,31 @@ export default function TrashPage() {
     }
   };
 
-  const handleRestore = async (vaultId: string) => {
-    try { 
-      // Restore vault by updating status and clearing deleted_at
-      const { error: vaultError } = await supabase
-        .from("vaults")
-        .update({
-          status: 'active',
-          deleted_at: null,
-        })
-        .eq("id", vaultId);
+const handleRestore = async (vaultId: string, vaultOwner: string) => {
+  if (address?.toLowerCase() !== vaultOwner.toLowerCase()) {
+    toast.error("Only the vault owner can restore this vault");
+    return;
+  }
 
-      if (vaultError) throw vaultError;
+  try {
+    const { error: vaultError } = await supabase
+      .from("vaults")
+      .update({
+        status: 'active',
+        deleted_at: null,
+      })
+      .eq("id", vaultId);
 
-      // Restore associated files
-      const { error: filesError } = await supabase
-        .from("files")
-        .update({
-          status: 'active',
-          deleted_at: null,
-        })
-        .eq("vault_id", vaultId);
+    if (vaultError) throw vaultError;
 
-      if (filesError) {
-        console.error('Error restoring files:', filesError);
-      }
-
-      // Remove from local state
-      setDeletedVaults(prev => prev.filter(vault => vault.id !== vaultId));
-      toast.success('Vault restored successfully');
-    } catch (error) {
-      console.error('Failed to restore vault:', error);
-      toast.error('Failed to restore vault');
-    }
-  };
-
+    // Remove from local state
+    setDeletedVaults(prev => prev.filter(vault => vault.id !== vaultId));
+    toast.success('Vault restored successfully');
+  } catch (error) {
+    console.error('Failed to restore vault:', error);
+    toast.error('Failed to restore vault');
+  }
+};
   const handlePermanentDelete = async (vaultId: string) => {
     if (!confirm("Are you sure you want to permanently delete this vault? This action cannot be undone.")) {
       return;
@@ -206,7 +198,7 @@ export default function TrashPage() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleRestore(vault.id)}
+                    onClick={() => handleRestore(vault.id,address!.toString())}
                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
                   >
                     <RotateCcw size={14} />

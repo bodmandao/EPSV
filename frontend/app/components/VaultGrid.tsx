@@ -22,6 +22,7 @@ interface Vault {
   balance: string;
   members: string[];
   files: { id: string; name: string; previewUrl: string }[];
+  owner: string; 
 }
 
 export default function VaultGrid() {
@@ -77,6 +78,7 @@ export default function VaultGrid() {
             balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 FIL",
             members: vault.members || [],
             files: filesWithPreviews,
+            owner : vault.owner_address
           };
         })
       );

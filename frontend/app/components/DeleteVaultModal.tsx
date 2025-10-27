@@ -93,11 +93,11 @@ export default function DeleteVaultModal({
 
       if (error) throw error;
 
-      if (!vault.funding || parseFloat(vault.funding) === 0) {
+      if (!vault.funding || parseFloat(vault.funding.amount) === 0) {
         return; // No funds to withdraw
       }
 
-        const valueInWei = parseEther(vault.funding);
+        const valueInWei = parseEther(vault.funding.amount.toString());
       
       const withdrawalSuccess = await writeContractAsync({
                 address: CONTRACT_ADDRESS as `0x${string}`,

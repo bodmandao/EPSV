@@ -34,7 +34,7 @@ export default function VaultCard({
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   
   const { address } = useAccount();
-  const isOwner = address?.toLowerCase() === owner.toLowerCase();
+  const isOwner = address?.toLowerCase() === owner?.toLowerCase();
 
   const shorten = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -107,14 +107,14 @@ export default function VaultCard({
               <span
                 key={idx}
                 className={`px-2 py-1 text-xs rounded-md font-mono ${
-                  member.toLowerCase() === owner.toLowerCase()
+                  member.toLowerCase() === owner?.toLowerCase()
                     ? 'bg-green-100 text-green-800 border border-green-200'
                     : 'bg-gray-100 text-gray-700'
                 }`}
-                title={member.toLowerCase() === owner.toLowerCase() ? 'Owner' : 'Member'}
+                title={member.toLowerCase() === owner?.toLowerCase() ? 'Owner' : 'Member'}
               >
                 {shorten(member)}
-                {member.toLowerCase() === owner.toLowerCase() && ' ⭐'}
+                {member.toLowerCase() === owner?.toLowerCase() && ' ⭐'}
               </span>
             ))
           ) : (
