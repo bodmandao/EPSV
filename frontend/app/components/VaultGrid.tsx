@@ -22,7 +22,7 @@ interface Vault {
   balance: string;
   members: string[];
   files: { id: string; name: string; previewUrl: string }[];
-  owner: string; 
+  owner: string;
 }
 
 export default function VaultGrid() {
@@ -45,7 +45,9 @@ export default function VaultGrid() {
       const { data: vaultData, error: vaultErr } = await supabase
         .from("vaults")
         .select("*")
-        .or(`owner_address.eq.${address},members.cs.{${address}}`);
+        .or(`owner_address.eq.${address},members.cs.{${address}}`)
+        .neq("status", "deleted")
+        .is("deleted_at", null);
 
       if (vaultErr) {
         console.error(vaultErr);
@@ -67,7 +69,7 @@ export default function VaultGrid() {
               return {
                 id: f.id,
                 name: f.file_name,
-                previewUrl:f.previewUrl,
+                previewUrl: f.previewUrl,
               };
             })
           );
@@ -78,13 +80,13 @@ export default function VaultGrid() {
             balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 FIL",
             members: vault.members || [],
             files: filesWithPreviews,
-            owner : vault.owner_address
+            owner: vault.owner_address
           };
         })
       );
 
       setVaults(vaultsWithFiles);
-      setVisibleVaults(vaultsWithFiles.slice(0, 8)); 
+      setVisibleVaults(vaultsWithFiles.slice(0, 8));
       setLoading(false);
     };
 
@@ -108,7 +110,7 @@ export default function VaultGrid() {
         const nextVaults = vaults.slice(0, nextPage * 8);
         setVisibleVaults(nextVaults);
         setPage(nextPage);
-        
+
         if (nextVaults.length >= vaults.length) {
           setHasMore(false);
         }
@@ -151,7 +153,7 @@ export default function VaultGrid() {
   return (
     <div className="p-8">
       <h2 className="text-lg text-gray-700 font-semibold mb-4">My Vaults</h2>
-      
+
       {vaults.length === 0 ? (
         <div className="text-center py-12">
           <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -166,10 +168,11 @@ export default function VaultGrid() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {visibleVaults.map((vault) => (
-              <VaultCard key={vault.id} {...vault} />
+              <VaultCard key={vault.id} {...vault}
+              />
             ))}
           </div>
-          
+
           {/* Loading indicator for lazy loading */}
           {hasMore && (
             <div ref={loadingRef} className="flex justify-center mt-8">
