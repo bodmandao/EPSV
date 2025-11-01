@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate environment variables
-    const RPC_URL = process.env.NEXT_PUBLIC_OG_RPC_URL;
-    const INDEXER_RPC = process.env.NEXT_PUBLIC_INDEXER_RPC;
+    const RPC_URL = 'https://evmrpc.0g.ai';
+    const INDEXER_RPC = 'https://indexer-storage-turbo.0g.ai';
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY;
 
     if (!RPC_URL || !INDEXER_RPC || !PRIVATE_KEY) {

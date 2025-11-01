@@ -108,7 +108,7 @@ export default function SharedVaultGrid() {
         .select("*")
         .filter("members", "cs", `{${address}}`);
 
-      if (vaultErr) {
+      if (vaultErr) { 
         console.error(vaultErr);
         setLoading(false);
         return;
@@ -144,7 +144,7 @@ export default function SharedVaultGrid() {
           return {
             id: vault.id,
             name: vault.name,
-            balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 FIL",
+            balance: `${vault.funding.amount} ${vault.funding.currency}` || "0 OG",
             members: vault.members || [],
             files: filesWithPreviews,
             owner : vault.owner_address

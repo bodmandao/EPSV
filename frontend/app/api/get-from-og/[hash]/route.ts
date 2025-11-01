@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { hash } = await params;
 
-    const INDEXER_RPC = process.env.NEXT_PUBLIC_INDEXER_RPC!;
+    const INDEXER_RPC = 'https://indexer-storage-turbo.0g.ai';
     const indexer = new Indexer(INDEXER_RPC);
 
     const downloadsDir = '/tmp';
