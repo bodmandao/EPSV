@@ -1,4 +1,4 @@
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.24;
 
 /// @title OGVaultPay - simple deposit/withdraw hub for native & ERC20 payments
 /// @notice Accepts native or ERC20 deposits on behalf of recipients, tracks balances, emits events.
