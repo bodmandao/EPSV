@@ -17,10 +17,26 @@ const Ogchain = {
     },
 } as const;
 
+const OgMainnet = {
+    id: 16661,
+    name: '0G Mainnet',
+    network: 'og-chain',
+    nativeCurrency: {
+        decimals: 18,
+        name: 'OG',
+        symbol: 'OG',
+    },
+    rpcUrls: {
+        public: { http: ['https://evmrpc.0g.ai'] },
+        default: { http: ['https://evmrpc.0g.ai'] },
+    },
+} as const;
+
 const config = createConfig({
-    chains: [Ogchain, base] as const,
+    chains: [Ogchain, OgMainnet] as const,
     transports: {
         [Ogchain.id]: http(),
+        [OgMainnet.id]: http(),
     },
     connectors: [
         injected(),
